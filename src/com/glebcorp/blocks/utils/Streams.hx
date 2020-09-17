@@ -1,8 +1,5 @@
 package com.glebcorp.blocks.utils;
 
-import com.glebcorp.blocks.Lexer.Token;
-import com.glebcorp.blocks.Parser.TokenStream;
-
 typedef Stream<T> = (?consume: Bool) -> Null<T>;
 
 class Streams {

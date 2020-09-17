@@ -1,15 +1,14 @@
 package com.glebcorp.blocks;
 
 import com.glebcorp.blocks.Lexer.TokenValue;
-
-using Safety;
-
 import com.glebcorp.blocks.Lexer.Tokens;
 import com.glebcorp.blocks.utils.Streams.Stream;
 import com.glebcorp.blocks.utils.Streams.stream;
 import com.glebcorp.blocks.Lexer.TokenType;
 import com.glebcorp.blocks.Lexer.Token;
 import com.glebcorp.blocks.utils.SyntaxError.syntaxError;
+
+using com.glebcorp.blocks.utils.Unwrap;
 
 interface PrefixParser<E, T: E> {
 	function parse(parser: Parser<E>, token: Token): T;
@@ -52,14 +51,14 @@ class Parser<E> {
 		return new Parser(prefix, postfix, stream(expr));
 	}
 
-	function parseAll(exprs: Array<Tokens>): Array<E> {
+	public function parseAll(exprs: Array<Tokens>): Array<E> {
 		return exprs.map(function(expr) {
 			nextToken = stream(expr);
 			return parseToEnd();
 		});
 	}
 
-	function parse(precedence = 0): E {
+	public function parse(precedence = 0.0): E {
 		var token = next();
 		var expr = expectPrefixParser(token).parse(this, token);
 
@@ -71,7 +70,7 @@ class Parser<E> {
 		return expr;
 	}
 
-	function parseToEnd(precedence = 0): E {
+	public function parseToEnd(precedence = 0.0): E {
 		var expr = parse(precedence);
 		checkTrailing();
 		return expr;
@@ -105,7 +104,7 @@ class Parser<E> {
 		if (parser == null) {
 			syntaxError("Invalid prefix operator: " + token.value, token.start);
 		}
-		return parser;
+		return parser.unwrap();
 	}
 
 	function getPrefixParser(token: Token) {
@@ -117,7 +116,7 @@ class Parser<E> {
 		if (parser == null) {
 			syntaxError("Invalid operator: " + token.value, token.start);
 		}
-		return parser;
+		return parser.unwrap();
 	}
 
 	function expect(cond: TokenCondition): Token {
@@ -140,7 +139,7 @@ class Parser<E> {
 				default: false;
 			};
 		} else {
-			return getTokenType(token) == cond.complexType.unsafe();
+			return getTokenType(token) == cond.complexType.unwrap();
 		}
 	}
 
@@ -149,8 +148,8 @@ class Parser<E> {
 		if (token == null) {
 			unexpectedToken(token);
 		}
-		prevToken = token;
-		return token;
+		prevToken = token.unwrap();
+		return prevToken;
 	}
 
 	function getTokenType(token: Token): String {
@@ -176,7 +175,7 @@ class Parser<E> {
 		};
 	}
 
-	function unexpectedToken(token: Null<Token>): Any {
+	public function unexpectedToken(token: Null<Token>): Any {
 		return token == null ? syntaxError("Unexpected end of expression",
 			this.prevToken.end) : syntaxError('Unexpected token: \'${this.getTokenType(token)}\'', token.start);
 	}

@@ -1,5 +1,4 @@
 --class-path src
---library safety
 --macro nullSafety("com.glebcorp.blocks", Strict)
 
 --main Main

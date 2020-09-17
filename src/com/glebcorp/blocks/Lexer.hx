@@ -2,7 +2,8 @@ package com.glebcorp.blocks;
 
 import com.glebcorp.blocks.utils.SyntaxError.syntaxError;
 
-using Safety;
+using com.glebcorp.blocks.utils.Unwrap;
+
 
 typedef Tokens = Array<Token>;
 typedef CharOrEOF = Null<String>;
@@ -154,16 +155,16 @@ class Lexer {
 			panicUnexpected();
 		}
 		if ('"' == char || "'" == char) {
-			return token(TokenType.String, function() return TokenValue.Text(string(char.unsafe())));
+			return token(TokenType.String, function() return TokenValue.Text(string(char.unwrap())));
 		}
-		var bracketInfo = config.bracketed[char.unsafe()];
+		var bracketInfo = config.bracketed[char.unwrap()];
 		if (bracketInfo != null) {
 			return exprBracketed(bracketInfo);
 		}
-		if (config.numberStartRegex.match(char.unsafe())) {
+		if (config.numberStartRegex.match(char.unwrap())) {
 			return token(TokenType.Number, function() return TokenValue.Text(sequence(config.numberRegex)));
 		}
-		if (config.identifierStartRegex.match(char.unsafe())) {
+		if (config.identifierStartRegex.match(char.unwrap())) {
 			return token(TokenType.Identifier, function() return TokenValue.Text(sequence(config.identifierRegex)));
 		}
 		return token(TokenType.Operator, function() return TokenValue.Text(sequence(config.operatorRegex)));
@@ -191,11 +192,11 @@ class Lexer {
 	}
 
 	function sequence(regex: EReg): String {
-		var buff = char.unsafe();
+		var buff = char.unwrap();
 		while (true) {
 			next();
-			if (char != EOF && regex.match(char.unsafe())) {
-				buff += char.unsafe();
+			if (char != EOF && regex.match(char.unwrap())) {
+				buff += char.unwrap();
 			} else {
 				break;
 			}
@@ -216,7 +217,7 @@ class Lexer {
 				if (char == "\n") {
 					syntaxError("String not closed", pos());
 				} else {
-					buff += escapeChar(char.unsafe());
+					buff += escapeChar(char.unwrap());
 					continue;
 				}
 			} else if (char == "\n") {
@@ -226,7 +227,7 @@ class Lexer {
 				buff += ending;
 				return buff;
 			}
-			buff += char.unsafe();
+			buff += char.unwrap();
 		}
 	}
 
@@ -270,7 +271,7 @@ class Lexer {
 					skipMultilineComment();
 				}
 			}
-			if (char == EOF || !isWhitespace(char.unsafe())) {
+			if (char == EOF || !isWhitespace(char.unwrap())) {
 				break;
 			}
 			next();
@@ -299,17 +300,17 @@ class Lexer {
 		var buff = "";
 		var opened = 1;
 		while (true) {
-			if (skipSequence(config.multilineCommentStart.unsafe())) {
+			if (skipSequence(config.multilineCommentStart.unwrap())) {
 				opened++;
-				buff += config.multilineCommentStart.unsafe();
+				buff += config.multilineCommentStart.unwrap();
 			}
-			if (skipSequence(config.multilineCommentEnd.unsafe())) {
+			if (skipSequence(config.multilineCommentEnd.unwrap())) {
 				if (--opened == 0) {
 					break;
 				}
-				buff += config.multilineCommentEnd.unsafe();
+				buff += config.multilineCommentEnd.unwrap();
 			}
-			buff += char.unsafe();
+			buff += char.unwrap();
 			next();
 			if (char == EOF) {
 				panicUnexpected();
@@ -319,7 +320,7 @@ class Lexer {
 	}
 
 	function isWhitespace(char: String): Bool {
-		return config.whitespaceRegex.unsafe().match(char);
+		return config.whitespaceRegex.unwrap().match(char);
 	}
 
 	function next(): CharOrEOF {
@@ -344,7 +345,7 @@ class Lexer {
 
 	function nextExceptEOF(): String {
 		var c = next();
-		return c == EOF ? panicUnexpected() : c.unsafe();
+		return c == EOF ? panicUnexpected() : c.unwrap();
 	}
 
 	function panicUnexpected(): Any {

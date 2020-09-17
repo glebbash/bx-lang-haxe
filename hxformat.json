@@ -1,0 +1,9 @@
+{
+    "whitespace": {
+        "colonPolicy": "after",
+        "typeCheckColonPolicy": "after",
+        "caseColonPolicy": "after",
+        "typeHintColonPolicy": "after",
+        "objectFieldColonPolicy": "after"
+    }
+}

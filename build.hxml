@@ -1,0 +1,15 @@
+--class-path src
+--library safety
+--macro nullSafety("com.glebcorp.blocks", Strict)
+
+--main Main
+
+--interp
+
+# --each
+
+# --js bin/js/main.js
+
+# --next
+
+# --cpp bin/cpp

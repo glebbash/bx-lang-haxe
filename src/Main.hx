@@ -1,3 +1,4 @@
+import com.glebcorp.blocks.BlocksParser;
 import haxe.Timer;
 import sys.io.File;
 import com.glebcorp.blocks.Blocks;
@@ -12,7 +13,7 @@ class Main {
 	}
 
 	static function parserTest() {
-		var parser = new Parser([], []);
+		var parser = new BlocksParser();
 	}
 
 	static function lexerBench() {

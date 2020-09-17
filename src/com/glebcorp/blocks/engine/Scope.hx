@@ -22,11 +22,11 @@ class Scope {
 		this.exports = exports;
 	}
 
-	function has(name: String): Bool {
+	public function has(name: String): Bool {
 		return data.exists(name);
 	}
 
-	function getCell(name: String): Cell {
+	public function getCell(name: String): Cell {
 		var val = data[name];
 		if (val == null) {
 			if (this.parent == null) {
@@ -37,11 +37,11 @@ class Scope {
 		return val;
 	}
 
-	function get(name: String): BValue {
+	public function get(name: String): BValue {
 		return this.getCell(name).value;
 	}
 
-	function define(name: String, value: BValue, constant = false) {
+	public function define(name: String, value: BValue, constant = false) {
 		if (has(name)) {
 			panic('Error: $name is already defined.');
         }
@@ -52,7 +52,7 @@ class Scope {
 		data[name] = cell;
 	}
 
-	function set(name: String, value: BValue) {
+	public function set(name: String, value: BValue) {
 		getCell(name).value = value;
 	}
 }

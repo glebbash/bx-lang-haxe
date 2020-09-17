@@ -6,8 +6,8 @@ import com.glebcorp.blocks.Parser;
 
 
 typedef ExprParser = Parser<Expression>;
-typedef Atom<T : Expression> = PrefixParser<Expression, T>;
-typedef Action<T : Expression> = PostfixParser<Expression, T>;
+typedef Atom = PrefixParser<Expression, Expression>;
+typedef Action = PostfixParser<Expression, Expression>;
 
 @:structInit
 class Context {

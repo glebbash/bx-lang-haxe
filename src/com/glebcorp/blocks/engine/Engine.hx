@@ -5,6 +5,10 @@ import com.glebcorp.blocks.utils.Panic.panic;
 using Type;
 using com.glebcorp.blocks.utils.ClassName;
 
+class Engine {
+	public function new() {}
+}
+
 class BValue {
 	public final type: String;
 
@@ -35,15 +39,13 @@ class BWrapper<T> extends BValue {
 	public function new(data: T) {
 		super();
 		this.data = data;
-    }
+	}
 
-    override
-	public function equals(other: BValue) {
+	override public function equals(other: BValue) {
 		return data == other.as(this.getClass()).data;
-    }
-    
-    override
-    public function toString() {
-        return Std.string(data);
-    }
+	}
+
+	override public function toString() {
+		return Std.string(data);
+	}
 }

@@ -9,11 +9,16 @@ class Main {
 	static inline var TIMES = 10000;
 
 	static function main() {
-		parserTest();
+		evalTest();
+	}
+
+	static function evalTest() {
+		var blocks = new Blocks("../bx-lang-js/data");
+		Sys.println(blocks.evalFile("tests.simple"));
 	}
 
 	static function parserTest() {
-		var parser = new BlocksParser();
+		new BlocksParser();
 	}
 
 	static function lexerBench() {

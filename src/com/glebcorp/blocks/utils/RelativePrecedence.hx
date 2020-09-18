@@ -2,6 +2,8 @@ package com.glebcorp.blocks.utils;
 
 import com.glebcorp.blocks.utils.MaxFloat.maxFloat;
 
+using com.glebcorp.blocks.utils.Unwrap;
+
 class NamedPrec {
 	public final name: String;
 	public final prec: Float;
@@ -29,7 +31,7 @@ class PrecGen {
 	}
 
 	public function between(after: String, before: String): NamedPrec {
-		var prec = Math.round((data[after] + data[before]) / 2);
+		var prec = Math.round((data[after].unwrap() + data[before].unwrap()) / 2);
 		data[name] = prec;
 		return new NamedPrec(name, prec);
 	}

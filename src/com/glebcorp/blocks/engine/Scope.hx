@@ -30,7 +30,7 @@ class Scope {
 		var val = data[name];
 		if (val == null) {
 			if (this.parent == null) {
-				panic('Error: $name is not defined.');
+				return panic('Error: $name is not defined.');
 			}
 			return parent.getCell(name);
 		}

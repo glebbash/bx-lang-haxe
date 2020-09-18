@@ -102,9 +102,9 @@ class Parser<E> {
 	function expectPostfixParser(token: Token): PostfixParser<E, E> {
 		var parser = getPostfixParser(token);
 		if (parser == null) {
-			syntaxError("Invalid prefix operator: " + token.value, token.start);
+			return syntaxError("Invalid prefix operator: " + token.value, token.start);
 		}
-		return parser.unwrap();
+		return parser;
 	}
 
 	function getPrefixParser(token: Token) {
@@ -114,9 +114,9 @@ class Parser<E> {
 	function expectPrefixParser(token: Token): PrefixParser<E, E> {
 		var parser = getPrefixParser(token);
 		if (parser == null) {
-			syntaxError("Invalid operator: " + token.value, token.start);
+			return syntaxError("Invalid operator: " + token.value, token.start);
 		}
-		return parser.unwrap();
+		return parser;
 	}
 
 	function expect(cond: TokenCondition): Token {
@@ -146,10 +146,10 @@ class Parser<E> {
 	function next(consume = true): Token {
 		var token = nextToken(consume);
 		if (token == null) {
-			unexpectedToken(token);
+			return unexpectedToken(token);
 		}
-		prevToken = token.unwrap();
-		return prevToken;
+		prevToken = token;
+		return token;
 	}
 
 	function getTokenType(token: Token): String {

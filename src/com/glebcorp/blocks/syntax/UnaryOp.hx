@@ -20,12 +20,12 @@ class UnaryOp implements Atom {
 }
 
 class UnaryOpExpr implements Expression {
-	public final oper: String;
+	public final symbol: String;
 	public final expr: Expression;
 	public final fun: UnaryFun;
 
-	public function new(oper: String, expr: Expression, fun: UnaryFun) {
-		this.oper = oper;
+	public function new(symbol: String, expr: Expression, fun: UnaryFun) {
+		this.symbol = symbol;
 		this.expr = expr;
 		this.fun = fun;
 	}
@@ -34,5 +34,5 @@ class UnaryOpExpr implements Expression {
 		return fun(expr.eval(ctx));
 
 	public function toString(s: String = "", i: String = "")
-		return oper + expr.toString(s, i);
+		return symbol + expr.toString(s, i);
 }

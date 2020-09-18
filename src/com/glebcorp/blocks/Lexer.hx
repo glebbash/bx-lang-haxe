@@ -32,6 +32,10 @@ enum TokenValue {
 class Position {
 	public final line: Int;
 	public final column: Int;
+
+	public function toString() {
+		return 'line $line, col: $column';
+	}
 }
 
 @:expose

@@ -31,7 +31,7 @@ class PrecGen {
 	}
 
 	public function between(after: String, before: String): NamedPrec {
-		var prec = Math.round((data[after].unwrap() + data[before].unwrap()) / 2);
+		var prec = (data[after].unwrap() + data[before].unwrap()) / 2.0;
 		data[name] = prec;
 		return new NamedPrec(name, prec);
 	}

@@ -8,6 +8,8 @@
 # --each
 
 # --js bin/js/main.js
+# --library hxtsdgen
+# --define js-es=6
 
 # --next
 

@@ -12,25 +12,23 @@ class Engine {
 class BValue {
 	public final type: String;
 
-	public function new() {
+	@:nullSafety(Off)
+	public function new()
 		this.type = this.getClass().getName();
-	}
 
-	public function is<T: BValue>(c: Class<T>): Bool {
+	@:nullSafety(Off)
+	public function is<T: BValue>(c: Class<T>): Bool
 		return this.getClass() == cast(c);
-	}
 
-	public function as<T: BValue>(c: Class<T>): T {
+	@:nullSafety(Off)
+	public function as<T: BValue>(c: Class<T>): T
 		return is(c) ? cast(this) : panic('Cannot cast $type to ${c.getName()}');
-	}
 
-	public function equals(other: BValue): Bool {
+	public function equals(other: BValue): Bool
 		return this == other;
-	}
 
-	public function toString(): String {
+	public function toString(): String
 		throw "Abstract method";
-	}
 }
 
 class BWrapper<T> extends BValue {
@@ -41,11 +39,10 @@ class BWrapper<T> extends BValue {
 		this.data = data;
 	}
 
-	override public function equals(other: BValue) {
+	@:nullSafety(Off)
+	override public function equals(other: BValue)
 		return data == other.as(this.getClass()).data;
-	}
 
-	override public function toString() {
+	override public function toString()
 		return Std.string(data);
-	}
 }

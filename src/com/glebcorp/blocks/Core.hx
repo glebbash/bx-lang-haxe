@@ -4,25 +4,24 @@ import com.glebcorp.blocks.engine.Engine.BValue;
 import com.glebcorp.blocks.engine.Scope;
 import com.glebcorp.blocks.Parser;
 
-
 typedef ExprParser = Parser<Expression>;
 typedef Atom = PrefixParser<Expression, Expression>;
 typedef Action = PostfixParser<Expression, Expression>;
 
+@:publicFields
 @:structInit
 class Context {
-    public var scope: Scope;
-    public var core: Blocks;
+	var scope: Scope;
+	var core: Blocks;
 }
 
 interface Expression {
-    function eval(ctx: Context): BValue;
+	function eval(ctx: Context): BValue;
 
-    function toString(?symbol: String, ?indent: String): String;
+	function toString(?symbol: String, ?indent: String): String;
 }
 
-class Core {
-    public static function subContext(ctx: Context) {
-        return { scope: new Scope(ctx.scope), core: ctx.core };
-    }
+extern class Core {
+	public static inline function subContext(ctx: Context): Context
+		return {scope: new Scope(ctx.scope), core: ctx.core};
 }

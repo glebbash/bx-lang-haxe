@@ -21,9 +21,9 @@ interface PostfixParser<E, T: E> {
 }
 
 interface TokenCondition {
-	public var type: Null<TokenType>;
-	public var value: Null<String>;
-	public var complexType: Null<String>;
+	var type: Null<TokenType>;
+	var value: Null<String>;
+	var complexType: Null<String>;
 }
 
 class Parser<E> {
@@ -47,9 +47,8 @@ class Parser<E> {
 		this.nextToken = nextToken == null ? EMPTY_STREAM : nextToken;
 	}
 
-	function subParser(expr: Tokens): Parser<E> {
+	function subParser(expr: Tokens): Parser<E>
 		return new Parser(prefix, postfix, stream(expr));
-	}
 
 	public function parseAll(exprs: Array<Tokens>): Array<E> {
 		return exprs.map(function(expr) {
@@ -95,9 +94,8 @@ class Parser<E> {
 		return parser.precedence(this);
 	}
 
-	function getPostfixParser(token: Token) {
+	function getPostfixParser(token: Token)
 		return postfix[getTokenType(token)];
-	}
 
 	function expectPostfixParser(token: Token): PostfixParser<E, E> {
 		var parser = getPostfixParser(token);
@@ -107,9 +105,8 @@ class Parser<E> {
 		return parser;
 	}
 
-	function getPrefixParser(token: Token) {
+	function getPrefixParser(token: Token)
 		return prefix[getTokenType(token)];
-	}
 
 	function expectPrefixParser(token: Token): PrefixParser<E, E> {
 		var parser = getPrefixParser(token);

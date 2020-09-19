@@ -1,6 +1,6 @@
 package com.glebcorp.blocks.utils;
 
-class MaxFloat {
+extern class MaxFloat {
     public static inline function maxFloat():Float {
         #if flash
         return untyped __global__['Number'].MAX_VALUE;

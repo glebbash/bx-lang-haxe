@@ -1,10 +1,12 @@
 package com.glebcorp.blocks;
 
-import sys.io.File;
 import com.glebcorp.blocks.Core;
 import com.glebcorp.blocks.engine.Scope;
 import com.glebcorp.blocks.engine.Engine;
 import com.glebcorp.blocks.Lexer.LexerConfig;
+#if(!sys)
+import com.glebcorp.blocks.utils.Panic.panic;
+#end
 
 using com.glebcorp.blocks.utils.ArrayLast;
 
@@ -47,9 +49,13 @@ class Blocks {
 	}
 
 	public function evalFile(path: String, ?ctx: Context): BValue {
+		#if(!sys)
+		return panic('Error: This platform does not support file I/O');
+		#else
 		var filePath = rootPath + "/" + path.split(".").join("/") + ".bx";
-		var file = File.getContent(filePath);
+		var file = sys.io.File.getContent(filePath);
 		return eval(file, ctx);
+		#end
 	}
 
 	public function eval(source: String, ?ctx: Context): BValue {

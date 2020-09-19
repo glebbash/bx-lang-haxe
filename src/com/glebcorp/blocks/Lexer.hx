@@ -4,11 +4,10 @@ import com.glebcorp.blocks.utils.SyntaxError.syntaxError;
 
 using com.glebcorp.blocks.utils.Unwrap;
 
-
 typedef Tokens = Array<Token>;
 typedef CharOrEOF = Null<String>;
 
-@:expose
+@:expose("TokenType")
 enum TokenType {
 	String;
 	Number;
@@ -21,60 +20,62 @@ enum TokenType {
 	Comment;
 }
 
-@:expose
+@:expose("TokenValue")
 enum TokenValue {
 	Text(str: String);
 	Tokens(tokens: Array<Tokens>);
 }
 
-@:expose
+@:expose("Position")
+@:publicFields
 @:structInit
 class Position {
-	public final line: Int;
-	public final column: Int;
+	final line: Int;
+	final column: Int;
 
-	public function toString() {
+	function toString()
 		return 'line $line, col: $column';
-	}
 }
 
-@:expose
+@:expose("Token")
+@:publicFields
 @:structInit
 class Token {
-	public final type: TokenType;
-	public final start: Position;
-	public final end: Position;
-	public final value: TokenValue;
+	final type: TokenType;
+	final start: Position;
+	final end: Position;
+	final value: TokenValue;
 
-	function toString() {
+	function toString()
 		return '$type(value: $value, start: [${start.line}, ${start.column}], end: [${start.line}, ${start.column}])';
-	}
 }
 
-@:expose
+@:expose("BracketInfo")
+@:publicFields
 @:structInit
 class BracketInfo {
-	public final end: String;
-	public final type: TokenType;
+	final end: String;
+	final type: TokenType;
 }
 
-@:expose
+@:expose("LexerConfig")
+@:publicFields
 @:structInit
 class LexerConfig {
-	public final singleLineCommentStart: Null<String> = null;
-	public final multilineCommentStart: Null<String> = null;
-	public final multilineCommentEnd: Null<String> = null;
-	public final whitespaceRegex: EReg;
-	public final numberStartRegex: EReg;
-	public final numberRegex: EReg;
-	public final identifierStartRegex: EReg;
-	public final identifierRegex: EReg;
-	public final operatorRegex: EReg;
-	public final bracketed: Map<String, BracketInfo>;
-	public final captureComments: Bool;
+	final singleLineCommentStart: Null<String> = null;
+	final multilineCommentStart: Null<String> = null;
+	final multilineCommentEnd: Null<String> = null;
+	final whitespaceRegex: EReg;
+	final numberStartRegex: EReg;
+	final numberRegex: EReg;
+	final identifierStartRegex: EReg;
+	final identifierRegex: EReg;
+	final operatorRegex: EReg;
+	final bracketed: Map<String, BracketInfo>;
+	final captureComments: Bool;
 }
 
-@:expose
+@:expose("Lexer")
 class Lexer {
 	private static inline final EOF = null;
 

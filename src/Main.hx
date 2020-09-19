@@ -1,12 +1,10 @@
-import com.glebcorp.blocks.BlocksParser;
-import haxe.Timer;
-import sys.io.File;
-import com.glebcorp.blocks.Blocks;
 import com.glebcorp.blocks.Lexer;
-import com.glebcorp.blocks.Parser;
+import com.glebcorp.blocks.BlocksParser;
+import com.glebcorp.blocks.Blocks;
+import com.glebcorp.blocks.utils.Println.println;
 
 class Main {
-	static inline var TIMES = 10000;
+	static extern inline var TIMES = 10000;
 
 	static function main() {
 		evalTest();
@@ -14,20 +12,22 @@ class Main {
 
 	static function evalTest() {
 		var blocks = new Blocks("../bx-lang-js/data");
-		Sys.println(blocks.evalFile("tests.simple"));
+		println(blocks.evalFile("tests.simple"));
 	}
 
 	static function parserTest() {
 		new BlocksParser();
 	}
 
+	#if(sys)
 	static function lexerBench() {
 		var lexer = new Lexer(Blocks.LEXER_CONFIG);
-		var file = File.getContent("../bx-lang-js/data/tests/generator.bx");
-		var was = Timer.stamp() * 1000;
+		var file = sys.io.File.getContent("../bx-lang-js/data/tests/generator.bx");
+		var was = haxe.Timer.stamp() * 1000;
 		for (_ in 1...TIMES) {
 			lexer.tokenize(file);
 		}
-		Sys.println((Timer.stamp() * 1000 - was) / TIMES);
+		println((haxe.Timer.stamp() * 1000 - was) / TIMES);
 	}
+	#end
 }

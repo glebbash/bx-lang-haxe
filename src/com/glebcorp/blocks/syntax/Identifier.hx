@@ -1,13 +1,16 @@
 package com.glebcorp.blocks.syntax;
 
+import com.glebcorp.blocks.engine.Engine;
+import com.glebcorp.blocks.utils.Panic.panic;
+import com.glebcorp.blocks.engine.Scope.Set;
 import com.glebcorp.blocks.Lexer.Token;
 import com.glebcorp.blocks.Lexer.TokenValue;
 import com.glebcorp.blocks.Core;
 
 class Identifier implements Atom {
-    public static final IDENT = new Identifier();
+	public static final IDENT = new Identifier();
 
-    function new() {}
+	function new() {}
 
 	public function parse(parser: ExprParser, token: Token): IdentExpr {
 		return switch (token.value) {
@@ -17,7 +20,7 @@ class Identifier implements Atom {
 	}
 }
 
-class IdentExpr implements Expression {
+class IdentExpr implements Expression implements Assignable implements Exportable {
 	public final name: String;
 
 	public function new(name: String)
@@ -25,6 +28,27 @@ class IdentExpr implements Expression {
 
 	public function eval(ctx: Context)
 		return ctx.scope.get(name);
+
+	public function export(exports: Set<String>) {
+		if (exports.exists(name)) {
+			panic('Cannot re-export \'name\'');
+		}
+		exports[name] = true;
+	}
+
+	public function isDefinable()
+		return true;
+
+	public function isValid()
+		return true;
+
+	public function define(ctx: Context, value: BValue, constant: Bool) {
+		ctx.scope.define(name, value, constant);
+	}
+
+	public function assign(ctx: Context, value: BValue) {
+		ctx.scope.set(name, value);
+	}
 
 	public function toString(?_, ?_)
 		return name;

@@ -2,7 +2,7 @@ package com.glebcorp.blocks.utils;
 
 import com.glebcorp.blocks.utils.MaxFloat.maxFloat;
 
-using com.glebcorp.blocks.utils.Unwrap;
+using com.glebcorp.blocks.utils.NullUtils;
 
 @:publicFields
 class NamedPrec {
@@ -18,7 +18,7 @@ class NamedPrec {
 extern class RelativePrecedence {
 	public static inline function precedence(): String->PrecGen {
 		var data: Map<String, Float> = ["MIN" => 0, "MAX" => maxFloat()];
-		return function(name: String) return new PrecGen(name, data);
+		return (name: String) -> new PrecGen(name, data);
 	}
 }
 

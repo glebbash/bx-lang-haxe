@@ -2,7 +2,8 @@ package com.glebcorp.blocks;
 
 import com.glebcorp.blocks.utils.SyntaxError.syntaxError;
 
-using com.glebcorp.blocks.utils.Unwrap;
+using com.glebcorp.blocks.utils.NullUtils;
+using com.glebcorp.blocks.utils.ArrayLast;
 
 typedef Tokens = Array<Token>;
 typedef CharOrEOF = Null<String>;
@@ -133,7 +134,7 @@ class Lexer {
 			if (row == startRow) {
 				expr.push(atom());
 			} else if (col > startCol) {
-				var last = expr[expr.length - 1];
+				var last = expr.last().unwrap();
 				if (last.type == TokenType.BlockIndent) {
 					switch (last.value) {
 						case Tokens(tokens):
@@ -147,7 +148,7 @@ class Lexer {
 					expr.push(atom());
 					continue;
 				}
-				expr.push(token(TokenType.BlockIndent, function() return TokenValue.Tokens([exprIndented(end)])));
+				expr.push(token(TokenType.BlockIndent, () -> TokenValue.Tokens([exprIndented(end)])));
 			} else {
 				break;
 			}
@@ -160,23 +161,23 @@ class Lexer {
 			return panicUnexpected();
 		}
 		if ('"' == char || "'" == char) {
-			return token(TokenType.String, function() return TokenValue.Text(string(char.unsafe())));
+			return token(TokenType.String, () -> TokenValue.Text(string(char.unsafe())));
 		}
 		var bracketInfo = config.bracketed[char.unsafe()];
 		if (bracketInfo != null) {
 			return exprBracketed(bracketInfo);
 		}
 		if (config.numberStartRegex.match(char.unsafe())) {
-			return token(TokenType.Number, function() return TokenValue.Text(sequence(config.numberRegex)));
+			return token(TokenType.Number, () -> TokenValue.Text(sequence(config.numberRegex)));
 		}
 		if (config.identifierStartRegex.match(char.unsafe())) {
-			return token(TokenType.Identifier, function() return TokenValue.Text(sequence(config.identifierRegex)));
+			return token(TokenType.Identifier, () -> TokenValue.Text(sequence(config.identifierRegex)));
 		}
-		return token(TokenType.Operator, function() return TokenValue.Text(sequence(config.operatorRegex)));
+		return token(TokenType.Operator, () -> TokenValue.Text(sequence(config.operatorRegex)));
 	}
 
 	function exprBracketed(info: BracketInfo): Token {
-		return token(info.type, function() {
+		return token(info.type, () -> {
 			var exprs: Array<Tokens> = [];
 			next(); // skip opening bracket
 			while (true) {
@@ -264,14 +265,14 @@ class Lexer {
 			var start: Position = pos();
 			if (config.singleLineCommentStart != null && skipSequence(config.singleLineCommentStart)) {
 				if (config.captureComments) {
-					comments.push(token(TokenType.Comment, function() return TokenValue.Text(sequence(~/[^\n]/)), start));
+					comments.push(token(TokenType.Comment, () -> TokenValue.Text(sequence(~/[^\n]/)), start));
 				} else {
 					sequence(~/[^\n]/);
 				}
 			}
 			if (config.multilineCommentStart != null && skipSequence(config.multilineCommentStart)) {
 				if (config.captureComments) {
-					comments.push(token(TokenType.Comment, function() return TokenValue.Text(skipMultilineComment()), start));
+					comments.push(token(TokenType.Comment, () -> TokenValue.Text(skipMultilineComment()), start));
 				} else {
 					skipMultilineComment();
 				}
@@ -377,6 +378,6 @@ class Lexer {
 			return syntaxError("Invalid multiline string", pos());
 		}
 		var padLength = lastLine.length - 1;
-		return lines.map(function(l) return l.substr(padLength)).join("\n") + "\n";
+		return lines.map(l -> l.substr(padLength)).join("\n") + "\n";
 	}
 }

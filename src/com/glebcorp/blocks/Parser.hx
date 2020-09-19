@@ -8,7 +8,7 @@ import com.glebcorp.blocks.Lexer.TokenType;
 import com.glebcorp.blocks.Lexer.Token;
 import com.glebcorp.blocks.utils.SyntaxError.syntaxError;
 
-using com.glebcorp.blocks.utils.Unwrap;
+using com.glebcorp.blocks.utils.NullUtils;
 
 interface PrefixParser<E, T: E> {
 	function parse(parser: Parser<E>, token: Token): T;
@@ -51,7 +51,7 @@ class Parser<E> {
 		return new Parser(prefix, postfix, stream(expr));
 
 	public function parseAll(exprs: Array<Tokens>): Array<E> {
-		return exprs.map(function(expr) {
+		return exprs.map(expr -> {
 			nextToken = stream(expr);
 			return parseToEnd();
 		});

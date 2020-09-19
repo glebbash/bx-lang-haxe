@@ -4,11 +4,12 @@ import com.glebcorp.blocks.Core;
 import com.glebcorp.blocks.engine.Scope;
 import com.glebcorp.blocks.engine.Engine;
 import com.glebcorp.blocks.Lexer.LexerConfig;
-#if(!sys)
+#if (!sys)
 import com.glebcorp.blocks.utils.Panic.panic;
 #end
 
 using com.glebcorp.blocks.utils.ArrayLast;
+using com.glebcorp.blocks.utils.NullUtils;
 
 class Blocks {
 	public static final LEXER_CONFIG: LexerConfig = {
@@ -49,7 +50,7 @@ class Blocks {
 	}
 
 	public function evalFile(path: String, ?ctx: Context): BValue {
-		#if(!sys)
+		#if (!sys)
 		return panic('Error: This platform does not support file I/O');
 		#else
 		var filePath = rootPath + "/" + path.split(".").join("/") + ".bx";
@@ -61,13 +62,13 @@ class Blocks {
 	public function eval(source: String, ?ctx: Context): BValue {
 		var tokens = lexer.tokenize(source);
 		var exprs = parser.parseAll(tokens);
-		var context: Context = ctx == null ? {scope: new Scope(globalScope), core: this} : ctx;
-		return exprs.map(function(e) return e.eval(context)).last();
+		var context = ctx.or({scope: new Scope(globalScope), core: this});
+		return exprs.map(e -> e.eval(context)).last().unwrap();
 	}
 
 	public function prettyPrint(source: String): String {
 		var tokens = lexer.tokenize(source);
 		var exprs = parser.parseAll(tokens);
-		return exprs.map(function(expr) return expr.toString()).join("\n");
+		return exprs.map(expr -> expr.toString()).join("\n");
 	}
 }

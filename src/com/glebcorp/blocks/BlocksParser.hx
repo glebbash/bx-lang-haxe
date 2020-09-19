@@ -10,7 +10,7 @@ import com.glebcorp.blocks.syntax.Identifier.IDENT;
 import com.glebcorp.blocks.syntax.Literal.LITERAL;
 import com.glebcorp.blocks.utils.Panic.panic;
 
-using com.glebcorp.blocks.utils.Unwrap;
+using com.glebcorp.blocks.utils.NullUtils;
 using com.glebcorp.blocks.BlocksParser.BValueUtils;
 using com.glebcorp.blocks.BlocksParser.ExpectNo;
 
@@ -41,12 +41,12 @@ class BlocksParser extends Parser<Expression> {
 		return val ? BBoolean.TRUE : BBoolean.FALSE;
 	}
 
-	public static final ADD: BinaryFun = function(a, b) return num(a.num() + b.num());
-	public static final SUB: BinaryFun = function(a, b) return num(a.num() - b.num());
-	public static final MUL: BinaryFun = function(a, b) return num(a.num() * b.num());
-	public static final DIV: BinaryFun = function(a, b) return num(a.num() / b.num());
-	public static final MOD: BinaryFun = function(a, b) return num(a.num() % b.num());
-	public static final POW: BinaryFun = function(a, b) return num(Math.pow(a.num(), b.num()));
+	public static final ADD: BinaryFun = (a, b) -> return num(a.num() + b.num());
+	public static final SUB: BinaryFun = (a, b) -> return num(a.num() - b.num());
+	public static final MUL: BinaryFun = (a, b) -> return num(a.num() * b.num());
+	public static final DIV: BinaryFun = (a, b) -> return num(a.num() / b.num());
+	public static final MOD: BinaryFun = (a, b) -> return num(a.num() % b.num());
+	public static final POW: BinaryFun = (a, b) -> return num(Math.pow(a.num(), b.num()));
 
 	public function new() {
 		super([], []);
@@ -61,18 +61,18 @@ class BlocksParser extends Parser<Expression> {
 		binaryOp(prec("/").sameAs("*"), DIV);
 		binaryOp(prec("%").sameAs("*"), MOD);
 		binaryOp(prec("^").moreThan("*"), POW);
-		binaryOp(prec("==").lessThan("+"), function(a, b) return bool(a.equals(b)));
-		binaryOp(prec("!=").sameAs("=="), function(a, b) return bool(!a.equals(b)));
-		binaryOp(prec(">").sameAs("=="), function(a, b) return bool(a.num() > b.num()));
-		binaryOp(prec(">=").sameAs("=="), function(a, b) return bool(a.num() >= b.num()));
-		binaryOp(prec("<").sameAs("=="), function(a, b) return bool(a.num() < b.num()));
-		binaryOp(prec("<=").sameAs("=="), function(a, b) return bool(a.num() <= b.num()));
-		binaryOp(prec("and").lessThan("=="), function(a, b) return bool(a.bool() && b.bool()));
-		binaryOp(prec("or").sameAs("and"), function(a, b) return bool(a.bool() || b.bool()));
+		binaryOp(prec("==").lessThan("+"), (a, b) -> bool(a.equals(b)));
+		binaryOp(prec("!=").sameAs("=="), (a, b) -> bool(!a.equals(b)));
+		binaryOp(prec(">").sameAs("=="), (a, b) -> bool(a.num() > b.num()));
+		binaryOp(prec(">=").sameAs("=="), (a, b) -> bool(a.num() >= b.num()));
+		binaryOp(prec("<").sameAs("=="), (a, b) -> bool(a.num() < b.num()));
+		binaryOp(prec("<=").sameAs("=="), (a, b) -> bool(a.num() <= b.num()));
+		binaryOp(prec("and").lessThan("=="), (a, b) -> bool(a.bool() && b.bool()));
+		binaryOp(prec("or").sameAs("and"), (a, b) -> bool(a.bool() || b.bool()));
 
-		unaryOp("-", function(x) return num(-x.num()));
-		unaryOp("+", function(x) return x.as(BNumber));
-		unaryOp("!", function(x) return bool(!x.bool()));
+		unaryOp("-", x -> num(-x.num()));
+		unaryOp("+", x -> x.as(BNumber));
+		unaryOp("!", x -> bool(!x.bool()));
 	}
 
 	function binaryOp(np: NamedPrec, fun: BinaryFun, rightAssoc = false) {

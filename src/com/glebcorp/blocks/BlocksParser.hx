@@ -38,7 +38,7 @@ class BlocksParser extends Parser<Expression> {
 	}
 
 	public static extern inline function bool(val: Bool): BBoolean {
-		return new BBoolean(val);
+		return val ? BBoolean.TRUE : BBoolean.FALSE;
 	}
 
 	public static final ADD: BinaryFun = function(a, b) return num(a.num() + b.num());

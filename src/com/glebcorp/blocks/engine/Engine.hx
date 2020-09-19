@@ -1,6 +1,5 @@
 package com.glebcorp.blocks.engine;
 
-import haxe.extern.Rest;
 import com.glebcorp.blocks.utils.Panic.panic;
 
 using Type;
@@ -8,12 +7,18 @@ using com.glebcorp.blocks.utils.ClassName;
 using com.glebcorp.blocks.utils.NullUtils;
 using com.glebcorp.blocks.utils.ArrayLast;
 
-typedef BMethod = (self: BValue, args: Rest<BValue>) -> BValue;
+typedef BMethod = (self: BValue, args: Array<BValue>) -> BValue;
 
 class Engine {
 	public final types: Map<String, BType> = [];
 
 	public function new() {}
+
+	public function addType(name: String, ?parent: String) {
+		var type = new BType(this, name, parent);
+		types[name] = type;
+		return type;
+	}
 
 	public function getType(name: String)
 		return types[name];
@@ -67,6 +72,11 @@ class BValue {
 	@:nullSafety(Off)
 	public function new()
 		this.type = this.getClass().getName();
+
+	public function invoke(engine: Engine, methodName: String, args: Array<BValue>): BValue {
+        var method = engine.expectType(type).expectMethod(methodName);
+        return method(this, args);
+    }
 
 	@:nullSafety(Off)
 	public function is<T: BValue>(c: Class<T>): Bool

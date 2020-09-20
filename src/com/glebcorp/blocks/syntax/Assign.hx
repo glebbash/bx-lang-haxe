@@ -3,7 +3,7 @@ package com.glebcorp.blocks.syntax;
 import com.glebcorp.blocks.Core;
 import com.glebcorp.blocks.engine.Engine.BValue;
 
-interface Assignable {
+interface AssignableExpr extends Expression {
     function isValid(): Bool;
 
     function isDefinable(): Bool;

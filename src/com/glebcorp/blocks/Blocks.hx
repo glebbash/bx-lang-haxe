@@ -1,9 +1,11 @@
 package com.glebcorp.blocks;
 
 import haxe.macro.Expr;
-import haxe.Exception;
 import haxe.Timer;
 import com.glebcorp.blocks.engine.Prelude;
+import com.glebcorp.blocks.engine.Prelude.BFunction.f1;
+import com.glebcorp.blocks.engine.Prelude.BFunction.f2;
+import com.glebcorp.blocks.engine.Prelude.BFunction.f3;
 import com.glebcorp.blocks.Core;
 import com.glebcorp.blocks.engine.Scope;
 import com.glebcorp.blocks.engine.Engine;
@@ -48,27 +50,6 @@ class Blocks {
 	public final engine = new Engine();
 	public final globalScope = new Scope();
 	public final rootPath: String;
-
-	public static inline function f1(fun: BValue->BValue): BFunction {
-		return new BFunction(args -> switch args {
-			case [x]: fun(x);
-			case _: panic("Expected 1 argument");
-		});
-	}
-
-	public static inline function f2(fun: (BValue, BValue) -> BValue): BFunction {
-		return new BFunction(args -> switch args {
-			case [a, b]: fun(a, b);
-			case _: panic("Expected 2 arguments");
-		});
-	}
-
-	public static inline function f3(fun: (BValue, BValue, BValue) -> BValue): BFunction {
-		return new BFunction(args -> switch args {
-			case [a, b, c]: fun(a, b, c);
-			case _: panic("Expected 3 arguments");
-		});
-	}
 
 	public function new(rootPath: String) {
 		this.rootPath = rootPath;

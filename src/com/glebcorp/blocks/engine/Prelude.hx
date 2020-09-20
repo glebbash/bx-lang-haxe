@@ -1,6 +1,8 @@
 package com.glebcorp.blocks.engine;
 
+import com.glebcorp.blocks.Core;
 import com.glebcorp.blocks.engine.Engine;
+import com.glebcorp.blocks.engine.Prelude.BVoid.VOID;
 import com.glebcorp.blocks.utils.Panic.panic;
 
 using com.glebcorp.blocks.utils.NullUtils;
@@ -23,6 +25,8 @@ class BBoolean extends BWrapper<Bool> {
 	public static final TRUE = new BBoolean(true);
 	public static final FALSE = new BBoolean(false);
 }
+
+//////////////////////////////////
 
 class BNumber extends BWrapper<Float> {}
 
@@ -135,6 +139,27 @@ typedef BFunctionBody = (args: Array<BValue>) -> BValue;
 
 @:publicFields
 class BFunction extends BWrapper<BFunctionBody> {
+	public static inline function f1(fun: BValue->BValue): BFunction {
+		return new BFunction(args -> switch args {
+			case [x]: fun(x);
+			case _: panic("Expected 1 argument");
+		});
+	}
+
+	public static inline function f2(fun: (BValue, BValue) -> BValue): BFunction {
+		return new BFunction(args -> switch args {
+			case [a, b]: fun(a, b);
+			case _: panic("Expected 2 arguments");
+		});
+	}
+
+	public static inline function f3(fun: (BValue, BValue, BValue) -> BValue): BFunction {
+		return new BFunction(args -> switch args {
+			case [a, b, c]: fun(a, b, c);
+			case _: panic("Expected 3 arguments");
+		});
+	}
+
 	function call(args: Array<BValue>): BValue
 		return this.data(args);
 
@@ -167,7 +192,7 @@ interface ExecState {
 @:structInit
 class PausedExec {
 	final execStack: Array<ExecState>;
-	final returned: BValue;
+	var returned: BValue;
 	final async: Bool;
 }
 
@@ -177,3 +202,164 @@ class BPausedExec extends BWrapper<PausedExec> {
 }
 
 //////////////////////////////////
+
+@:publicFields
+class BGenerator extends BValue implements BIterable<BValue> implements BIterator<BValue> {
+	var pausedExec: PausedExec = {
+		execStack: [],
+		returned: VOID,
+		async: false,
+	};
+	var ended = false;
+	final ctx: Context;
+	final body: Expression;
+
+	function new(ctx: Context, body: Expression) {
+		super();
+		this.ctx = ctx;
+		this.body = body;
+	}
+
+	function next()
+		return nextValue();
+
+	function nextValue(?val: BValue): BValue {
+		if (ended) {
+			return pausedExec.returned;
+		}
+
+		// first run
+		if (pausedExec.execStack.length == 0) {
+			final res = body.eval(ctx);
+			if (res.is(BPausedExec)) {
+				pauseOn(res.as(BPausedExec));
+			} else {
+				endOn(res);
+			}
+			return pausedExec.returned;
+		}
+
+		var res = val;
+		while (true) {
+			res = pausedExec.execStack.pop().unsafe().resume(res);
+			if (res.is(BPausedExec)) {
+				pauseOn(res.unsafe().as(BPausedExec));
+				break;
+			}
+			if (pausedExec.execStack.length == 0) {
+				endOn(res);
+				break;
+			}
+		}
+		return pausedExec.returned;
+	}
+
+	function hasNext() {
+		return !ended;
+	}
+
+	function pauseOn(pe: BPausedExec) {
+		if (pe.data.async) {
+			panic("await outside of async");
+		}
+		pausedExec.returned = pe.data.returned;
+		for (val in pe.data.execStack) {
+			pausedExec.execStack.push(val);
+		}
+	}
+
+	function endOn(val: BValue) {
+		ended = true;
+		pausedExec = {
+			execStack: [],
+			returned: val.is(BReturn) ? val.as(BReturn).data : val,
+			async: false,
+		};
+	}
+
+	function iterator(): BIterator<BValue> {
+		return this;
+	}
+
+	override function toString()
+		return "generator";
+}
+
+@:publicFields
+class BAsyncFunction extends BValue {
+	var pausedExec: PausedExec = {
+		execStack: [],
+		returned: VOID,
+		async: true,
+	};
+	var ended = false;
+	final ctx: Context;
+	final body: Expression;
+
+	function new(ctx: Context, body: Expression) {
+		super();
+		this.ctx = ctx;
+		this.body = body;
+	}
+
+	function call(cb: BFunction, ?val: BValue): BValue {
+		final ret = nextValue(val);
+		if (ended) {
+			return cb.call([ret]);
+		}
+		return ret.as(BFunction).call([BFunction.f1(val -> call(cb, val))]);
+	}
+
+	function nextValue(?val: BValue): BValue {
+		if (ended) {
+			return pausedExec.returned;
+		}
+
+		// first run
+		if (pausedExec.execStack.length == 0) {
+			final res = body.eval(ctx);
+			if (res.is(BPausedExec)) {
+				pauseOn(res.as(BPausedExec));
+			} else {
+				endOn(res);
+			}
+			return pausedExec.returned;
+		}
+
+		var res = val;
+		while (true) {
+			res = pausedExec.execStack.pop().unsafe().resume(res);
+			if (res.is(BPausedExec)) {
+				pauseOn(res.unsafe().as(BPausedExec));
+				break;
+			}
+			if (pausedExec.execStack.length == 0) {
+				endOn(res);
+				break;
+			}
+		}
+		return pausedExec.returned;
+	}
+
+	function pauseOn(pe: BPausedExec) {
+		if (!pe.data.async) {
+			panic("yield outside of generator");
+		}
+		pausedExec.returned = pe.data.returned;
+		for (val in pe.data.execStack) {
+			pausedExec.execStack.push(val);
+		}
+	}
+
+	function endOn(val: BValue) {
+		ended = true;
+		pausedExec = {
+			execStack: [],
+			returned: val.is(BReturn) ? val.as(BReturn).data : val,
+			async: true,
+		};
+	}
+
+	override function toString()
+		return "asyncFunction";
+}

@@ -1,13 +1,13 @@
 package com.glebcorp.blocks.engine;
 
+import com.glebcorp.blocks.engine.Prelude.BFunctionBody;
+import com.glebcorp.blocks.engine.Prelude.BFunction;
 import com.glebcorp.blocks.utils.Panic.panic;
 
 using Type;
 using com.glebcorp.blocks.utils.ClassName;
 using com.glebcorp.blocks.utils.NullUtils;
 using com.glebcorp.blocks.utils.ArrayLast;
-
-typedef BMethod = (self: BValue, args: Array<BValue>) -> BValue;
 
 class Engine {
 	public final types: Map<String, BType> = [];
@@ -31,7 +31,7 @@ class BType {
 	public final name: String;
 
 	final parent: Null<String>;
-	final methods: Map<String, Array<BMethod>> = [];
+	final methods: Map<String, Array<BFunction>> = [];
 	final engine: Engine;
 
 	public function new(engine: Engine, name: String, ?parent: String) {
@@ -40,7 +40,7 @@ class BType {
 		this.parent = parent;
 	}
 
-	public function addMethod(name: String, method: BMethod) {
+	public function addMethod(name: String, method: BFunction) {
 		if (!methods.exists(name)) {
 			methods[name] = [method];
 		} else {
@@ -49,7 +49,7 @@ class BType {
 		return this;
 	}
 
-	public function getMethod(name: String): Null<BMethod> {
+	public function getMethod(name: String): Null<BFunction> {
 		var methods = this.methods[name].or([]);
 		var method = methods.last();
 
@@ -74,15 +74,15 @@ class BValue {
 		this.type = this.getClass().getName();
 
 	public function invoke(engine: Engine, methodName: String, args: Array<BValue>): BValue {
-        var method = engine.expectType(type).expectMethod(methodName);
-        return method(this, args);
+		var method = engine.expectType(type).expectMethod(methodName);
+		args.insert(0, this);
+        return method.call(args);
     }
 
 	@:nullSafety(Off)
 	public function is<T: BValue>(c: Class<T>): Bool
 		return this.getClass() == cast(c);
 
-	@:nullSafety(Off)
 	public function as<T: BValue>(c: Class<T>): T
 		return is(c) ? cast(this) : panic('Cannot cast $type to ${c.getName()}');
 

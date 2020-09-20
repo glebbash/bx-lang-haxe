@@ -1,12 +1,16 @@
 package com.glebcorp.blocks;
 
+import haxe.macro.Expr;
+import haxe.Exception;
+import haxe.Timer;
+import com.glebcorp.blocks.engine.Prelude;
 import com.glebcorp.blocks.Core;
 import com.glebcorp.blocks.engine.Scope;
 import com.glebcorp.blocks.engine.Engine;
-import com.glebcorp.blocks.Lexer.LexerConfig;
-#if (!sys)
+import com.glebcorp.blocks.engine.Prelude.BVoid.VOID;
+import com.glebcorp.blocks.Lexer;
+import com.glebcorp.blocks.utils.Println.println;
 import com.glebcorp.blocks.utils.Panic.panic;
-#end
 
 using com.glebcorp.blocks.utils.ArrayLast;
 using com.glebcorp.blocks.utils.NullUtils;
@@ -45,8 +49,91 @@ class Blocks {
 	public final globalScope = new Scope();
 	public final rootPath: String;
 
+	public static inline function f1(fun: BValue->BValue): BFunction {
+		return new BFunction(args -> switch args {
+			case [x]: fun(x);
+			case _: panic("Expected 1 argument");
+		});
+	}
+
+	public static inline function f2(fun: (BValue, BValue) -> BValue): BFunction {
+		return new BFunction(args -> switch args {
+			case [a, b]: fun(a, b);
+			case _: panic("Expected 2 arguments");
+		});
+	}
+
+	public static inline function f3(fun: (BValue, BValue, BValue) -> BValue): BFunction {
+		return new BFunction(args -> switch args {
+			case [a, b, c]: fun(a, b, c);
+			case _: panic("Expected 3 arguments");
+		});
+	}
+
 	public function new(rootPath: String) {
 		this.rootPath = rootPath;
+
+		var Any = engine.addType("Any");
+		engine.addType("Boolean", "Any");
+		engine.addType("Number", "Any");
+		engine.addType("String", "Any");
+		var Array = engine.addType("Array", "Any");
+		engine.addType("Object", "Any");
+		engine.addType("Function", "Any");
+		var Generator = engine.addType("Generator", "Function");
+
+		Any.addMethod("also", f2((fun, val) -> {
+			fun.as(BFunction).call([val]);
+			return val;
+		}));
+		// Generator.addMethod("next", (gen, ?val: BValue) -> {
+		// 	return gen.as(BGenerator).nextValue(val);
+		// }).addMethod("hasNext", (gen) -> {
+		// 	return bool(!gen.as(BGenerator).ended);
+		// });
+		Array.addMethod("map", f2((arr, funV) -> {
+			final fun = funV.as(BFunction);
+			return new BArray(arr.as(BArray).data.map(e -> fun.call([e])));
+		})).addMethod("fold", f3((arr, init, funV) -> {
+			final fun = funV.as(BFunction);
+			return Lambda.fold(arr.as(BArray).data, (acc, val) -> fun.call([acc, val]), init);
+		}));
+		globalScope.define("print", new BFunction((val) -> {
+			println(val.toString());
+			return VOID;
+		}));
+		// globalScope.define("input", new BFunction((fun) -> {
+		// 	var cb = fun.as(BFunction);
+		// 	process.stdin.once("data", (data) -> {
+		// 		cb.call(new BString(data.toString().slice(0, -1)));
+		// 	});
+		// 	return VOID;
+		// }));
+		globalScope.define("time", new BFunction(_ -> {
+			return new BNumber(Math.floor(Timer.stamp() * 1000));
+		}));
+		// globalScope.define("exit", new BFunction((val) -> {
+		// 	process.exit(val ? .as(BNumber) ? .data);
+		// }));
+		globalScope.define("require", f1(pathV -> {
+			var path = pathV.as(BString).data;
+			var importCtx: Context = {
+				scope: new Scope(globalScope, new Set()),
+				core: this,
+			};
+			evalFile(path, importCtx);
+			final obj = new BObject([]);
+			for (key in importCtx.scope.exports.unwrap().keys()) {
+				obj.data[key] = importCtx.scope.get(key);
+			}
+			return obj;
+		}), true);
+		globalScope.define("type", f1(val -> new BString(val.type)));
+		globalScope.define("Parse", new BObject([
+			"number" => f1(str -> {
+				return new BNumber(Std.parseFloat(str.as(BString).data));
+			})
+		]));
 	}
 
 	public function evalFile(path: String, ?ctx: Context): BValue {

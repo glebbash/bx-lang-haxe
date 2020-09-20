@@ -60,7 +60,7 @@ class BlocksParser extends Parser<Expression> {
 		binaryOp(prec("*").moreThan("+"), MUL);
 		binaryOp(prec("/").sameAs("*"), DIV);
 		binaryOp(prec("%").sameAs("*"), MOD);
-		binaryOp(prec("^").moreThan("*"), POW);
+		binaryOp(prec("^").moreThan("*"), POW, true);
 		binaryOp(prec("==").lessThan("+"), (a, b) -> bool(a.equals(b)));
 		binaryOp(prec("!=").sameAs("=="), (a, b) -> bool(!a.equals(b)));
 		binaryOp(prec(">").sameAs("=="), (a, b) -> bool(a.num() > b.num()));
@@ -69,6 +69,7 @@ class BlocksParser extends Parser<Expression> {
 		binaryOp(prec("<=").sameAs("=="), (a, b) -> bool(a.num() <= b.num()));
 		binaryOp(prec("and").lessThan("=="), (a, b) -> bool(a.bool() && b.bool()));
 		binaryOp(prec("or").sameAs("and"), (a, b) -> bool(a.bool() || b.bool()));
+		binaryOp(prec("..").lessThan("+"), (a, b) -> new BRange(Math.round(a.num()), Math.round(b.num())));
 
 		unaryOp("-", x -> num(-x.num()));
 		unaryOp("+", x -> x.as(BNumber));

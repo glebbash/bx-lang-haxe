@@ -12,6 +12,7 @@ import com.glebcorp.blocks.utils.Format;
 import com.glebcorp.blocks.syntax.Identifier.IDENT;
 import com.glebcorp.blocks.syntax.Literal.LITERAL;
 import com.glebcorp.blocks.syntax.ArrayAtom.ARRAY;
+import com.glebcorp.blocks.syntax.Paren.PAREN;
 import com.glebcorp.blocks.utils.Panic.panic;
 
 using com.glebcorp.blocks.utils.NullUtils;
@@ -86,7 +87,7 @@ class BlocksParser extends Parser<Expression> {
 		addMacro("<IDENT>", IDENT);
 		addMacro("<NUMBER>", LITERAL);
 		addMacro("<STRING>", LITERAL);
-		// addMacro("<BLOCK_PAREN>", PAREN);
+		addMacro("<BLOCK_PAREN>", PAREN);
 		addMacro("<BLOCK_BRACKET>", ARRAY);
 		// addMacro("<BLOCK_BRACe>", OBJECT);
 

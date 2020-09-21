@@ -4,6 +4,8 @@ import com.glebcorp.blocks.engine.Prelude;
 import com.glebcorp.blocks.Lexer;
 import com.glebcorp.blocks.Core;
 
+using com.glebcorp.blocks.utils.NullUtils;
+
 @:publicFields
 class Continue implements Atom {
 	static final CONTINUE = new Continue();
@@ -15,7 +17,7 @@ class Continue implements Atom {
 			final token = parser.next();
 			return switch (token.value) {
 				case Text(str):
-					final times = Std.parseInt(str);
+					final times = Std.parseInt(str).unwrap();
 					if (times < 2) {
 						parser.unexpectedToken(token);
 					}

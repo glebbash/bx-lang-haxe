@@ -11,6 +11,7 @@ import com.glebcorp.blocks.Core;
 import com.glebcorp.blocks.utils.Format;
 import com.glebcorp.blocks.syntax.Identifier.IDENT;
 import com.glebcorp.blocks.syntax.Literal;
+import com.glebcorp.blocks.syntax.Assign;
 import com.glebcorp.blocks.syntax.Literal.LITERAL;
 import com.glebcorp.blocks.syntax.ArrayAtom.ARRAY;
 import com.glebcorp.blocks.syntax.Paren.PAREN;
@@ -108,8 +109,7 @@ class BlocksParser extends Parser<Expression> {
 		binaryOp(prec("%").sameAs("*"), MOD);
 		binaryOp(prec("^").moreThan("*"), POW, true);
 
-		// postfix["="] = new Assign(prec("=").lessThan("+")[1]);
-		prec("=").lessThan("+");
+		postfix["="] = new Assign(prec("=").lessThan("+").prec);
 
 		doAndAssign(prec("+=").sameAs("="), ADD);
 		doAndAssign(prec("-=").sameAs("="), SUB);

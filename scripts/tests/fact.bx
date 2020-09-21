@@ -1,0 +1,18 @@
+fun factorial1(x)
+    if (x <= 2) return x
+    x * factorial1(x - 1)
+
+fun factorial2(x) if (x <= 2) {
+    return x
+} else {
+    return x * factorial2(x - 1)
+}
+
+fun factorial3(x)
+    if (x <= 2) { x } else {
+        x * factorial3(x - 1)
+    }
+
+print(factorial1(10))
+print(factorial2(10))
+print(factorial3(10))

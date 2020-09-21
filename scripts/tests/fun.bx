@@ -1,0 +1,5 @@
+fun sum(x, y) x + y
+print(sum(2, 2))
+
+fun add(x) fun(y) x + y
+print(add(2)(2))

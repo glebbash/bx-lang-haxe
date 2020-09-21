@@ -1,0 +1,4 @@
+import tests.export::{ add, sub }
+
+print(add(2, 2))
+print(sub(10, 6))

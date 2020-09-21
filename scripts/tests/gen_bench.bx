@@ -1,0 +1,46 @@
+gen fun range(min, max) {
+    let i = min
+    while (true) {
+        yield i
+        i += 1
+        if (i > max) break
+    }
+}
+
+gen fun range_f(min, max) {
+    for (i in min..max) yield i
+}
+
+fun bench(name, func) {
+    const was = time()
+    func()
+    print("{} done in {}" % [name, time() - was])
+}
+
+fun noop() { 2 + 2 }
+
+const max = 1000000
+
+bench("gen_w", fun() {
+    for (i in range(1, max))
+        noop()
+})
+
+bench("gen_f", fun() {
+    for (i in range_f(1, max))
+        noop()
+})
+
+bench("while", fun() {
+    let i = 1
+    while (true) {
+        noop()
+        i += 1
+        if (i > max) break
+    }
+})
+
+bench("for", fun() {
+    for (i in 1..max)
+        noop()
+})

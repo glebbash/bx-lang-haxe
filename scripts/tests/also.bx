@@ -1,0 +1,2 @@
+const res = 2.also(print) + 2
+print(res)

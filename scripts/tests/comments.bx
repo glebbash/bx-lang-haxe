@@ -1,0 +1,13 @@
+// print "a = ${a}, b = ${b}"
+// print "a = $a, b = $b"
+
+/* 
+comment
+    /*
+    nested
+        /*
+        and again
+        */
+    */
+*/
+print(2 + 2) // comment

@@ -11,8 +11,8 @@ class Main {
 	}
 
 	static function evalTest() {
-		var blocks = new Blocks("../bx-lang-js/data");
-		println(blocks.evalFile("tests.simple"));
+		var blocks = new Blocks("scripts");
+		println(blocks.evalFile("tests.tmp"));
 	}
 
 	static function parserTest() {

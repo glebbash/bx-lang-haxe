@@ -1,0 +1,22 @@
+/*
+    TODO:
+        Array::slice
+        Array::reduce
+        ? ternary if
+*/
+
+// get max element of array
+
+fun max(a, b) if (a > b) a else b
+const arr = [4, 6, 1, 8, 3]
+
+let max_e = arr[0]
+for e in arr.slice(1) {
+    max_e = max(e, max_e)
+}
+print("max {} = {}" % [arr, max_e])
+
+// or
+
+max_e = arr.reduce(max)
+print("max {} = {}" % [arr, max_e])

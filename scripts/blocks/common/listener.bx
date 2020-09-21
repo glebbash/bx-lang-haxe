@@ -1,0 +1,14 @@
+class Button {
+    fun new(self)
+        self.listener = fun() 0
+    
+    fun click(self)
+        self::listener(self)
+}
+
+Button().with({
+    text: "Start"
+    listener: fun(self) {
+        print("button '{}' clicked" % [self.text])
+    }
+}).click()

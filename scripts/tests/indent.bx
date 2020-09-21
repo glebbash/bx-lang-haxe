@@ -1,0 +1,12 @@
+const bum = [1, 2, 3]
+
+print(bum
+        .map(fun(x) x + 1)
+        .map(fun(x) x * 3)
+)
+
+print(2 + 2
+        * 2)
+
+print(2 * 2
+        + 2)

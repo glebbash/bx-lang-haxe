@@ -1,0 +1,4 @@
+fun factorial(x)
+    if (x <= 2) { x } else {
+        x * factorial(x - 1)
+    }

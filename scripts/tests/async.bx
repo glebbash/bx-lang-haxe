@@ -1,0 +1,7 @@
+async fun test() {
+    print("What's your name?")
+    const name = await input
+    print("Oh hi " + name)
+}
+
+test()(exit)

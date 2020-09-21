@@ -1,0 +1,9 @@
+gen fun test() {
+    const res = yield "Hi"
+    return res
+}
+
+test().also(fun(t) {
+    print(t.next())
+    print(t.next("Hello"))
+})

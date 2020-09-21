@@ -1,0 +1,21 @@
+gen fun dialog() {
+    const name = yield "What's your name?"
+    print("Oh, hi " + name)
+    const age = yield "What's your age?"
+    if (Parse::number(age) >= 18) {
+        print("that is legal")
+    } else {
+        print("that is not so legal")
+    }
+}
+
+fun loop(dialog, response) {
+    const prompt = dialog.next(response)
+    if (!dialog.hasNext()) exit()
+    print(prompt)
+    input(fun(response) {
+        loop(dialog, response)
+    })
+}
+
+loop(dialog(), "start")

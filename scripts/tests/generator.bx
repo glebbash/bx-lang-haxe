@@ -1,0 +1,57 @@
+fun iter(g, f) {
+    let counter = 10
+    while (true) {
+        const val = g.next()
+        if (!g.hasNext()) {
+            return val
+        }
+        f(val)
+        if (counter -= 1 < 0) {
+            print("...")
+            break
+        }
+    }
+}
+
+fun test(name, generator) {
+    print("-" * 10)
+    print(name + "\n")
+    print("return " + iter(generator, fun(i) {
+        print("yield " + i)
+    }))
+}
+
+gen fun onetwo(asc) {
+    if (asc) {
+        yield 1
+        yield 2
+    } else {
+        yield 2
+        yield 1
+    }
+}
+
+gen fun range(min, max) {
+    for (i in min..max) yield i
+}
+
+gen fun range_w(min, max) {
+    let i = min
+    while (true) {
+        yield i
+        i += 1
+        if (i > max) break
+    }
+}
+
+test("1, 2", onetwo(true))
+test("2, 1", onetwo(false))
+test("1..5", range(1, 5))
+test("1..5 w", range_w(1, 5))
+/*
+iter #1
+    gen line 1
+    for iter 1
+    for-body line 1
+*/
+// TODO: fix this

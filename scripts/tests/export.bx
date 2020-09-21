@@ -1,0 +1,6 @@
+export fun add(a, b) a + b
+export fun sub(a, b) a - b
+export fun mul(a, b) a * b
+export fun div(a, b) a / b
+export fun mod(a, b) a % b
+export fun pow(a, b) a ^ b

@@ -1,0 +1,12 @@
+fun Adult(x) x
+const Child = Adult
+
+const res = Adult({
+    name: "John"
+    children: [
+        Child({ name: "Steve" })
+        Child({ name: "Mary" })
+    ]
+})
+
+print(res)

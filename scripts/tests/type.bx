@@ -1,0 +1,9 @@
+const truth = [
+    true
+    0
+    ""
+    []
+    {}
+]
+
+print(truth.map(type))

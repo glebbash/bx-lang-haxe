@@ -1,0 +1,9 @@
+const truth = [
+    true is Boolean
+    0 is Number
+    "" is String
+    [] is Array
+    {} is Object
+]
+
+print(truth.fold(true, fun(a, b) a and b))

@@ -1,0 +1,34 @@
+const tests = [
+    // "generator"
+    // "array"
+    // "assign"
+    // "comments"
+    // "continue_break"
+    // "import"
+    // "fact"
+    // "for"
+    // "fun"
+    // "if"
+    // "indent"
+    // "is"
+    // "object"
+    // "string_fmt"
+    // "while"
+    // "also"
+    // "ml_string"
+    // "parse_number"
+    // "type"
+    // "for_gen"
+    "gen_bench"
+    // "yield_back"
+    // "yield_back_1"
+    // "async"
+]
+
+const stars = "*" * 25
+
+for (test in tests) {
+    print("{}\n{}\n{}" % [stars, test, stars])
+    require("tests." + test)
+    print(stars + "\n")
+}

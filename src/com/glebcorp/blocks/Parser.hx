@@ -20,12 +20,15 @@ interface PostfixParser<E, T: E> {
 	function parse(parser: Parser<E>, token: Token, expr: E): T;
 }
 
-interface TokenCondition {
-	var type: Null<TokenType>;
-	var value: Null<String>;
-	var complexType: Null<String>;
+@:publicFields
+@:structInit
+class TokenCondition {
+	var type: Null<TokenType> = null;
+	var value: Null<String> = null;
+	var complexType: Null<String> = null;
 }
 
+@:publicFields
 class Parser<E> {
 	private static final START_TOKEN: Token = {
 		type: TokenType.Comment,
@@ -37,11 +40,11 @@ class Parser<E> {
 
 	private var prevToken = START_TOKEN;
 
-	public var prefix: Map<String, PrefixParser<E, E>>;
-	public var postfix: Map<String, PostfixParser<E, E>>;
-	public var nextToken: Stream<Token>;
+	var prefix: Map<String, PrefixParser<E, E>>;
+	var postfix: Map<String, PostfixParser<E, E>>;
+	var nextToken: Stream<Token>;
 
-	public function new(prefix: Map<String, PrefixParser<E, E>>, postfix: Map<String, PostfixParser<E, E>>, ?nextToken: Stream<Token>) {
+	function new(prefix: Map<String, PrefixParser<E, E>>, postfix: Map<String, PostfixParser<E, E>>, ?nextToken: Stream<Token>) {
 		this.prefix = prefix;
 		this.postfix = postfix;
 		this.nextToken = nextToken == null ? EMPTY_STREAM : nextToken;
@@ -50,14 +53,14 @@ class Parser<E> {
 	function subParser(expr: Tokens): Parser<E>
 		return new Parser(prefix, postfix, stream(expr));
 
-	public function parseAll(exprs: Array<Tokens>): Array<E> {
+	function parseAll(exprs: Array<Tokens>): Array<E> {
 		return exprs.map(expr -> {
 			nextToken = stream(expr);
 			return parseToEnd();
 		});
 	}
 
-	public function parse(precedence = 0.0): E {
+	function parse(precedence = 0.0): E {
 		var token = next();
 		var expr = expectPrefixParser(token).parse(this, token);
 
@@ -69,7 +72,7 @@ class Parser<E> {
 		return expr;
 	}
 
-	public function parseToEnd(precedence = 0.0): E {
+	function parseToEnd(precedence = 0.0): E {
 		var expr = parse(precedence);
 		checkTrailing();
 		return expr;
@@ -151,12 +154,12 @@ class Parser<E> {
 
 	function getTokenType(token: Token): String {
 		return switch (token.type) {
-			case TokenType.String:
-				"<STRING>";
-			case TokenType.Number:
-				"<NUMBER>";
-			case TokenType.BlockParen, TokenType.BlockBrace, TokenType.BlockBracket, TokenType.BlockIndent:
-				'<${Std.string(token.type).toUpperCase()}>';
+			case String: "<STRING>";
+			case Number: "<NUMBER>";
+			case BlockParen: "<BLOCK_PAREN>";
+			case BlockBrace: "<BLOCK_BRACE>";
+			case BlockBracket: "<BLOCK_BRACKET>";
+			case BlockIndent: "<BLOCK_INDENT>";
 			case TokenType.Operator:
 				switch (token.value) {
 					case TokenValue.Text(val): val;
@@ -167,13 +170,12 @@ class Parser<E> {
 					case TokenValue.Text(val): prefix.exists(val) || postfix.exists(val) ? val : "<IDENT>";
 					default: unexpectedToken(token);
 				}
-			default:
-				unexpectedToken(token);
+			default: unexpectedToken(token);
 		};
 	}
 
-	public function unexpectedToken(token: Null<Token>): Any {
+	function unexpectedToken(token: Null<Token>): Any {
 		return token == null ? syntaxError("Unexpected end of expression",
-			this.prevToken.end) : syntaxError('Unexpected token: \'${this.getTokenType(token)}\'', token.start);
+			this.prevToken.end) : syntaxError('Unexpected token: \'${getTokenType(token)}\'', token.start);
 	}
 }

@@ -1,5 +1,6 @@
 package com.glebcorp.blocks.syntax;
 
+import com.glebcorp.blocks.syntax.Assign;
 import com.glebcorp.blocks.engine.Engine;
 import com.glebcorp.blocks.utils.Panic.panic;
 import com.glebcorp.blocks.engine.Scope.Set;
@@ -20,7 +21,7 @@ class Identifier implements Atom {
 	}
 }
 
-class IdentExpr implements Expression implements Assignable implements Exportable {
+class IdentExpr implements AssignableExpr implements Exportable {
 	public final name: String;
 
 	public function new(name: String)

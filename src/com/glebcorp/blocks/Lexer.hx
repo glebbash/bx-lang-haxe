@@ -3,7 +3,7 @@ package com.glebcorp.blocks;
 import com.glebcorp.blocks.utils.SyntaxError.syntaxError;
 
 using com.glebcorp.blocks.utils.NullUtils;
-using com.glebcorp.blocks.utils.ArrayLast;
+using com.glebcorp.blocks.utils.ArrayUtils;
 
 typedef Tokens = Array<Token>;
 typedef CharOrEOF = Null<String>;
@@ -378,6 +378,6 @@ class Lexer {
 			return syntaxError("Invalid multiline string", pos());
 		}
 		var padLength = lastLine.length - 1;
-		return lines.map(l -> l.substr(padLength)).join("\n") + "\n";
+		return lines.map(l -> l.substr(padLength)).join("\n");
 	}
 }

@@ -1,13 +1,12 @@
 package com.glebcorp.blocks.engine;
 
-import com.glebcorp.blocks.engine.Prelude.BFunctionBody;
 import com.glebcorp.blocks.engine.Prelude.BFunction;
 import com.glebcorp.blocks.utils.Panic.panic;
 
 using Type;
 using com.glebcorp.blocks.utils.ClassName;
 using com.glebcorp.blocks.utils.NullUtils;
-using com.glebcorp.blocks.utils.ArrayLast;
+using com.glebcorp.blocks.utils.ArrayUtils;
 
 class Engine {
 	public final types: Map<String, BType> = [];

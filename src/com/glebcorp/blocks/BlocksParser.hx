@@ -1,5 +1,6 @@
 package com.glebcorp.blocks;
 
+import com.glebcorp.blocks.syntax.Call;
 import com.glebcorp.blocks.syntax.DoAndAssign;
 import com.glebcorp.blocks.syntax.UnaryOp;
 import com.glebcorp.blocks.engine.Engine;
@@ -10,6 +11,7 @@ import com.glebcorp.blocks.Core;
 import com.glebcorp.blocks.utils.Format;
 import com.glebcorp.blocks.syntax.Identifier.IDENT;
 import com.glebcorp.blocks.syntax.Literal.LITERAL;
+import com.glebcorp.blocks.syntax.ArrayAtom.ARRAY;
 import com.glebcorp.blocks.utils.Panic.panic;
 
 using com.glebcorp.blocks.utils.NullUtils;
@@ -85,7 +87,7 @@ class BlocksParser extends Parser<Expression> {
 		addMacro("<NUMBER>", LITERAL);
 		addMacro("<STRING>", LITERAL);
 		// addMacro("<BLOCK_PAREN>", PAREN);
-		// addMacro("<BLOCK_BRACKET>", ARRAY);
+		addMacro("<BLOCK_BRACKET>", ARRAY);
 		// addMacro("<BLOCK_BRACe>", OBJECT);
 
 		binaryOp(prec("+").moreThan("MIN"), ADD);
@@ -94,6 +96,8 @@ class BlocksParser extends Parser<Expression> {
 		binaryOp(prec("/").sameAs("*"), DIV);
 		binaryOp(prec("%").sameAs("*"), MOD);
 		binaryOp(prec("^").moreThan("*"), POW, true);
+
+		prec("=").lessThan("+");
 
 		doAndAssign(prec("+=").sameAs("="), ADD);
 		doAndAssign(prec("-=").sameAs("="), SUB);
@@ -118,7 +122,7 @@ class BlocksParser extends Parser<Expression> {
 		unaryOp("+", x -> x.as(BNumber));
 		unaryOp("!", x -> bool(!x.bool()));
 
-		// postfix.set("<BLOCK_PAREN>", call(prec("<CALL>").moreThan("^")[1]));
+		postfix["<BLOCK_PAREN>"] = new Call(prec("<CALL>").moreThan("^").prec);
 		// postfix.set("<BLOCK_BRACKET>", element(prec("<ELEM>").sameAs("<CALL>")[1]));
 		// postfix.set("<BLOCK_INDENT>", INDENT);
 

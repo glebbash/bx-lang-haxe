@@ -1,5 +1,6 @@
 --class-path src
 --macro nullSafety("com.glebcorp.blocks", Strict)
+--library tink_lang
 
 --main Main
 

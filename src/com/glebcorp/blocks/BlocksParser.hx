@@ -10,10 +10,16 @@ import com.glebcorp.blocks.syntax.BinaryOp;
 import com.glebcorp.blocks.Core;
 import com.glebcorp.blocks.utils.Format;
 import com.glebcorp.blocks.syntax.Identifier.IDENT;
+import com.glebcorp.blocks.syntax.Literal;
 import com.glebcorp.blocks.syntax.Literal.LITERAL;
 import com.glebcorp.blocks.syntax.ArrayAtom.ARRAY;
 import com.glebcorp.blocks.syntax.Paren.PAREN;
 import com.glebcorp.blocks.syntax.Object.OBJECT;
+import com.glebcorp.blocks.syntax.Return.RETURN;
+import com.glebcorp.blocks.syntax.Break.BREAK;
+import com.glebcorp.blocks.syntax.Continue.CONTINUE;
+import com.glebcorp.blocks.syntax.Yield.YIELD;
+import com.glebcorp.blocks.syntax.Await.AWAIT;
 import com.glebcorp.blocks.utils.Panic.panic;
 
 using com.glebcorp.blocks.utils.NullUtils;
@@ -102,6 +108,7 @@ class BlocksParser extends Parser<Expression> {
 		binaryOp(prec("%").sameAs("*"), MOD);
 		binaryOp(prec("^").moreThan("*"), POW, true);
 
+		// postfix["="] = new Assign(prec("=").lessThan("+")[1]);
 		prec("=").lessThan("+");
 
 		doAndAssign(prec("+=").sameAs("="), ADD);
@@ -136,10 +143,8 @@ class BlocksParser extends Parser<Expression> {
 		// postfix.set(".", dot(prec(".").moreThan("^")[1]));
 		// postfix.set("::", doubleSemi(prec("::").sameAs(".")[1]));
 
-		// postfix.set("=", assign(prec("=").lessThan("+")[1]));
-
-		// addMacro("true", literal(TRUE));
-		// addMacro("false", literal(FALSE));
+		addMacro("true", new ConstLiteral(BBoolean.TRUE));
+		addMacro("false", new ConstLiteral(BBoolean.FALSE));
 
 		// addMacro("let", define(false));
 		// addMacro("const", define(true));
@@ -148,17 +153,17 @@ class BlocksParser extends Parser<Expression> {
 
 		// addMacro("while", WHILE);
 		// addMacro("for", FOR);
-		// addMacro("break", BREAK);
-		// addMacro("continue", CONTINUE);
+		addMacro("break", BREAK);
+		addMacro("continue", CONTINUE);
 
 		// addMacro("fun", FUN);
-		// addMacro("return", RETURN);
+		addMacro("return", RETURN);
 
 		// addMacro("gen", GEN);
-		// addMacro("yield", YIELD);
+		addMacro("yield", YIELD);
 
 		// addMacro("async", ASYNC);
-		// addMacro("await", AWAIT);
+		addMacro("await", AWAIT);
 
 		// addMacro("export", EXPORT);
 		// addMacro("import", IMPORT);

@@ -11,12 +11,13 @@ import com.glebcorp.blocks.engine.Prelude;
 using com.glebcorp.blocks.utils.NullUtils;
 using com.glebcorp.blocks.utils.Slice;
 
+@:publicFields
 class Literal implements Atom {
-	public static final LITERAL = new Literal();
+	static final LITERAL = new Literal();
 
-	function new() {}
+	private function new() {}
 
-	public function parse(parser: ExprParser, token: Token): LiteralExpr {
+	function parse(parser: ExprParser, token: Token): LiteralExpr {
 		return switch (token.value) {
 			case Text(str):
 				switch (token.type) {
@@ -26,6 +27,15 @@ class Literal implements Atom {
 				}
 			default: parser.unexpectedToken(token);
 		};
+	}
+}
+
+@:publicFields
+@:tink class ConstLiteral implements Atom {
+	final value: BValue = _;
+
+	function parse(parser: ExprParser, token: Token): LiteralExpr {
+		return new LiteralExpr(value);
 	}
 }
 

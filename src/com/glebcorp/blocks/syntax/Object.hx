@@ -93,14 +93,14 @@ class ObjectExpr implements AssignableExpr {
 		}
 		final obj = value.as(BObject).data;
 		for (pair in pairs) {
-			ctx.scope.define(pair.getDef(), obj[pair.name], constant);
+			ctx.scope.define(pair.getDef(), obj[pair.name].unwrap(), constant);
 		}
 	}
 
 	function assign(ctx: Context, value: BValue) {
 		final obj = value.as(BObject).data;
 		for (pair in pairs) {
-			ctx.scope.set(pair.getDef(), obj[pair.name]);
+			ctx.scope.set(pair.getDef(), obj[pair.name].unwrap());
 		}
 	}
 

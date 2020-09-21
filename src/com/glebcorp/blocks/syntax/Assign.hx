@@ -4,11 +4,11 @@ import com.glebcorp.blocks.Core;
 import com.glebcorp.blocks.engine.Engine.BValue;
 
 interface AssignableExpr extends Expression {
-    function isValid(): Bool;
+	function isValid(): Bool;
 
-    function isDefinable(): Bool;
+	function isDefinable(): Bool;
 
-    function define(ctx: Context, value: BValue, constant: Bool): Void;
+	function define(ctx: Context, value: BValue, constant: Bool): Void;
 
-    function assign(ctx: Context, value: BValue): Void;
+	function assign(ctx: Context, value: BValue): Void;
 }

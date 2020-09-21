@@ -3,6 +3,7 @@ package com.glebcorp.blocks.utils;
 import haxe.Exception;
 
 extern class Panic {
-    public static inline function panic(msg: String): Any
+    public static inline function panic(msg: String): Any {
         throw new Exception(msg);
+    }
 }

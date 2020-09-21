@@ -3,43 +3,39 @@ package com.glebcorp.blocks.engine;
 import com.glebcorp.blocks.engine.Prelude.BFunction;
 import com.glebcorp.blocks.utils.Panic.panic;
 
-using Type;
 using com.glebcorp.blocks.utils.ClassName;
 using com.glebcorp.blocks.utils.NullUtils;
 using com.glebcorp.blocks.utils.ArrayUtils;
 
+@:publicFields
 class Engine {
-	public final types: Map<String, BType> = [];
+	final types: Map<String, BType> = [];
 
-	public function new() {}
+	function new() {}
 
-	public function addType(name: String, ?parent: String) {
-		var type = new BType(this, name, parent);
+	function addType(name: String, ?parent: String) {
+		final type = new BType(this, name, parent);
 		types[name] = type;
 		return type;
 	}
 
-	public function getType(name: String)
+	function getType(name: String) {
 		return types[name];
-
-	public function expectType(name: String)
-		return types[name].or(panic('There is no $name type in this context'));
-}
-
-class BType {
-	public final name: String;
-
-	final parent: Null<String>;
-	final methods: Map<String, Array<BFunction>> = [];
-	final engine: Engine;
-
-	public function new(engine: Engine, name: String, ?parent: String) {
-		this.engine = engine;
-		this.name = name;
-		this.parent = parent;
 	}
 
-	public function addMethod(name: String, method: BFunction) {
+	function expectType(name: String) {
+		return types[name].or(panic('There is no $name type in this context'));
+	}
+}
+
+@:publicFields
+@:tink class BType {
+	private final engine: Engine = _;
+	final name: String = _;
+	final parent: Null<String> = _;
+	private final methods: Map<String, Array<BFunction>> = [];
+
+	function addMethod(name: String, method: BFunction) {
 		if (!methods.exists(name)) {
 			methods[name] = [method];
 		} else {
@@ -48,62 +44,68 @@ class BType {
 		return this;
 	}
 
-	public function getMethod(name: String): Null<BFunction> {
-		var methods = this.methods[name].or([]);
-		var method = methods.last();
+	function getMethod(name: String): Null<BFunction> {
+		final method = methods[name].or([]).last();
 
-		if (method != null)
+		if (method != null) {
 			return method;
+		}
 
 		return parent != null ? engine.expectType(parent.unsafe()).getMethod(name) : null;
 	}
 
-	public function expectMethod(name: String)
-		return getMethod(name).or(panic('Type ${this.name} has no \'$name\' method'));
+	function expectMethod(method: String) {
+		return getMethod(method).or(panic('Type $name has no \'$method\' method'));
+	}
 
-	public function toString()
+	function toString() {
 		return name;
+	}
 }
 
+@:publicFields
 class BValue {
-	public final type: String;
+	final type: String;
 
 	@:nullSafety(Off)
-	public function new()
-		this.type = this.getClass().getName();
+	function new() {
+		type = Type.getClass(this).getName();
+	}
 
-	public function invoke(engine: Engine, methodName: String, args: Array<BValue>): BValue {
-		var method = engine.expectType(type).expectMethod(methodName);
+	function invoke(engine: Engine, methodName: String, args: Array<BValue>): BValue {
+		final method = engine.expectType(type).expectMethod(methodName);
 		args.insert(0, this);
-        return method.call(args);
-    }
-
-	@:nullSafety(Off)
-	public function is<T: BValue>(c: Class<T>): Bool
-		return this.getClass() == cast(c);
-
-	public function as<T: BValue>(c: Class<T>): T
-		return is(c) ? cast(this) : panic('Cannot cast $type to ${c.getName()}');
-
-	public function equals(other: BValue): Bool
-		return this == other;
-
-	public function toString(): String
-		throw "Abstract method";
-}
-
-class BWrapper<T> extends BValue {
-	public final data: T;
-
-	public function new(data: T) {
-		super();
-		this.data = data;
+		return method.call(args);
 	}
 
 	@:nullSafety(Off)
-	override public function equals(other: BValue)
-		return data == other.as(this.getClass()).data;
+	function is<T: BValue>(c: Class<T>): Bool {
+		return Type.getClass(this) == cast(c);
+	}
 
-	override public function toString()
+	function as<T: BValue>(c: Class<T>): T {
+		return is(c) ? cast(this) : panic('Cannot cast $type to ${c.getName()}');
+	}
+
+	function equals(other: BValue): Bool {
+		return this == other;
+	}
+
+	function toString(): String {
+		throw "Abstract method";
+	}
+}
+
+@:publicFields
+@:tink class BWrapper<T> extends BValue {
+	final data: T = _;
+
+	@:nullSafety(Off)
+	override function equals(other: BValue) {
+		return data == other.as(Type.getClass(this)).data;
+	}
+
+	override function toString() {
 		return Std.string(data);
+	}
 }

@@ -13,10 +13,9 @@ using com.glebcorp.blocks.utils.ArrayUtils;
 using com.glebcorp.blocks.utils.NullUtils;
 
 @:publicFields
-@:structInit
-class KVPair {
-	final name: String;
-	final value: Null<Expression>;
+@:tink class KVPair {
+	final name: String = _;
+	final value: Null<Expression> = _;
 
 	inline function getDef() {
 		return value == null ? name : value.unsafe().toString();
@@ -43,7 +42,7 @@ class Object implements Atom {
 						} else {
 							null;
 						};
-						pairs.push({name: name, value: value});
+						pairs.push(new KVPair(name, value));
 						if (subParser.nextToken(false) != null) {
 							subParser.expect({value: ","});
 						}
@@ -57,12 +56,8 @@ class Object implements Atom {
 }
 
 @:publicFields
-class ObjectExpr implements AssignableExpr {
-	final pairs: Array<KVPair>;
-
-	function new(pairs: Array<KVPair>) {
-		this.pairs = pairs;
-	}
+@:tink class ObjectExpr implements AssignableExpr {
+	final pairs: Array<KVPair> = _;
 
 	function isValid() {
 		return pairs.every(pair -> pair.value == null || pair.value.isOfType(IdentExpr));

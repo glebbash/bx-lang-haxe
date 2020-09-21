@@ -20,34 +20,36 @@ using com.glebcorp.blocks.utils.NullUtils;
 using com.glebcorp.blocks.BlocksParser.BValueUtils;
 using com.glebcorp.blocks.BlocksParser.ExpectNo;
 
+@:publicFields
 extern class BValueUtils {
-	public static inline function num(val: BValue): Float {
+	static inline function num(val: BValue): Float {
 		return val.as(BNumber).data;
 	}
 
-	public static inline function bool(val: BValue): Bool {
+	static inline function bool(val: BValue): Bool {
 		return val.as(BBoolean).data;
 	}
 }
 
 extern class ExpectNo {
-	public static inline function expectNo<T>(map: Map<String, T>, key: String): Void {
+	static inline function expectNo<T>(map: Map<String, T>, key: String): Void {
 		if (map.exists(key)) {
-			panic('Cannot redefine \'${key}\'');
+			panic('Cannot redefine \'$key\'');
 		}
 	}
 }
 
+@:publicFields
 class BlocksParser extends Parser<Expression> {
-	public static extern inline function num(val: Float): BNumber {
+	static extern inline function num(val: Float): BNumber {
 		return new BNumber(val);
 	}
 
-	public static extern inline function bool(val: Bool): BBoolean {
+	static extern inline function bool(val: Bool): BBoolean {
 		return val ? BBoolean.TRUE : BBoolean.FALSE;
 	}
 
-	public static function repeat(str: String, times: Int): String {
+	static function repeat(str: String, times: Int): String {
 		final buff = new StringBuf();
 		for (_ in 0...times) {
 			buff.add(str);
@@ -55,21 +57,21 @@ class BlocksParser extends Parser<Expression> {
 		return buff.toString();
 	}
 
-	public static final ADD: BinaryFun = (a, b) -> {
+	static final ADD: BinaryFun = (a, b) -> {
 		if (a.is(BString)) {
 			return new BString(a.as(BString).data + b.toString());
 		}
 		return num(a.num() + b.num());
 	};
-	public static final SUB: BinaryFun = (a, b) -> return num(a.num() - b.num());
-	public static final MUL: BinaryFun = (a, b) -> {
+	static final SUB: BinaryFun = (a, b) -> num(a.num() - b.num());
+	static final MUL: BinaryFun = (a, b) -> {
 		if (a.is(BString)) {
 			return new BString(repeat(a.as(BString).data, Math.round(b.num())));
 		}
 		return num(a.num() * b.num());
 	};
-	public static final DIV: BinaryFun = (a, b) -> return num(a.num() / b.num());
-	public static final MOD: BinaryFun = (a, b) -> {
+	static final DIV: BinaryFun = (a, b) -> num(a.num() / b.num());
+	static final MOD: BinaryFun = (a, b) -> {
 		if (a.is(BString)) {
 			final template = a.as(BString).data;
 			if (b.is(BObject)) {
@@ -80,11 +82,12 @@ class BlocksParser extends Parser<Expression> {
 		}
 		return num(a.num() % b.num());
 	};
-	public static final POW: BinaryFun = (a, b) -> return num(Math.pow(a.num(), b.num()));
+	static final POW: BinaryFun = (a, b) -> num(Math.pow(a.num(), b.num()));
 
-	public function new() {
+	function new() {
 		super([], []);
 		var prec = RelativePrecedence.precedence();
+		
 		addMacro("<IDENT>", IDENT);
 		addMacro("<NUMBER>", LITERAL);
 		addMacro("<STRING>", LITERAL);

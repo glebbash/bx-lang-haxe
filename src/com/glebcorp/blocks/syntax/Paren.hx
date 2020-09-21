@@ -31,18 +31,14 @@ class Paren implements Atom {
 }
 
 @:publicFields
-class ParenExpr implements Expression {
-    final expr: Expression;
-
-    function new(expr: Expression) {
-        this.expr = expr;
-    }
+@:tink class ParenExpr implements Expression {
+    final expr: Expression = _;
 
     function eval(ctx: Context) {
         return expr.eval(ctx);
     }
 
-    function toString(symbol = "", indent = "") {
-        return '(${expr.toString(symbol, indent)})';
+    function toString(s = "", i = "") {
+        return '(${expr.toString(s, i)})';
     }
 }

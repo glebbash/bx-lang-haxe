@@ -2,18 +2,16 @@ package com.glebcorp.blocks.utils;
 
 import com.glebcorp.blocks.Lexer.Position;
 
-class SyntaxError {
-	var message: String;
-	var position: Position;
+@:publicFields
+@:tink class SyntaxError {
+	final message: String = _;
+	final position: Position = _;
 
-	function new(message: String, position: Position) {
-		this.message = message;
-		this.position = position;
+	function toString() {
+		return 'Syntax error $message\n\tat $position';
 	}
 
-	function toString()
-		return 'Syntax error ${message}\n\tat ${position}';
-
-	public static extern inline function syntaxError(message: String, position: Position): Any
+	static extern inline function syntaxError(message: String, position: Position): Any {
 		throw new SyntaxError(message, position);
+	}
 }

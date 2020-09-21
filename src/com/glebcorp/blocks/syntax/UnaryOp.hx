@@ -6,33 +6,26 @@ import com.glebcorp.blocks.Core;
 
 typedef UnaryFun = (x: BValue) -> BValue;
 
-class UnaryOp implements Atom {
-	public final symbol: String;
-	public final fun: UnaryFun;
+@:publicFields
+@:tink class UnaryOp implements Atom {
+	final symbol: String = _;
+	final fun: UnaryFun = _;
 
-	public function new(symbol: String, fun: UnaryFun) {
-		this.symbol = symbol;
-		this.fun = fun;
-	}
-
-	public function parse(parser: ExprParser, token: Token): UnaryOpExpr
+	function parse(parser: ExprParser, token: Token): UnaryOpExpr
 		return new UnaryOpExpr(symbol, parser.parse(), fun);
 }
 
-class UnaryOpExpr implements Expression {
-	public final symbol: String;
-	public final expr: Expression;
-	public final fun: UnaryFun;
+@:publicFields
+@:tink class UnaryOpExpr implements Expression {
+	final symbol: String = _;
+	final expr: Expression = _;
+	final fun: UnaryFun = _;
 
-	public function new(symbol: String, expr: Expression, fun: UnaryFun) {
-		this.symbol = symbol;
-		this.expr = expr;
-		this.fun = fun;
+	function eval(ctx: Context) {
+		return fun(expr.eval(ctx));
 	}
 
-	public function eval(ctx: Context)
-		return fun(expr.eval(ctx));
-
-	public function toString(s: String = "", i: String = "")
+	function toString(s = "", i = "") {
 		return symbol + expr.toString(s, i);
+	}
 }

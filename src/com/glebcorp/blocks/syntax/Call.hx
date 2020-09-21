@@ -8,28 +8,23 @@ import com.glebcorp.blocks.Core;
 
 class Call extends PrecAction {
 	override public function parse(parser: ExprParser, token: Token, expr: Expression): CallExpr {
-        return new CallExpr(expr, ARRAY.parse(parser, token));
-    }
+		return new CallExpr(expr, ARRAY.parse(parser, token));
+	}
 }
 
 @:publicFields
-class CallExpr implements Expression {
-    final fun: Expression;
-    final args: ArrayExpr;
+@:tink class CallExpr implements Expression {
+	final fun: Expression = _;
+	final args: ArrayExpr = _;
 
-    function new(fun: Expression, args: ArrayExpr) {
-        this.fun = fun;
-        this.args = args;
-    }
+	function eval(ctx: Context) {
+		final fun = fun.eval(ctx).as(BFunction);
+		final args = args.items.map(arg -> arg.eval(ctx));
+		final value = fun.call(args);
+		return value;
+	}
 
-    function eval(ctx: Context) {
-        final fun = fun.eval(ctx).as(BFunction);
-        final args = args.items.map(arg -> arg.eval(ctx));
-        final value = fun.call(args);
-        return value;
-    }
-
-    function toString(symbol = "", indent = "") {
-        return '$fun(${args.toString(symbol, indent)})';
-    }
+	function toString(s = "", i = "") {
+		return '$fun(${args.toString(s, i)})';
+	}
 }

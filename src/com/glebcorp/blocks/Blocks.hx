@@ -1,6 +1,5 @@
 package com.glebcorp.blocks;
 
-import haxe.macro.Expr;
 import haxe.Timer;
 import com.glebcorp.blocks.engine.Prelude;
 import com.glebcorp.blocks.engine.Prelude.BFunction.f1;
@@ -10,6 +9,7 @@ import com.glebcorp.blocks.Core;
 import com.glebcorp.blocks.engine.Scope;
 import com.glebcorp.blocks.engine.Engine;
 import com.glebcorp.blocks.engine.Prelude.BVoid.VOID;
+import com.glebcorp.blocks.BlocksParser.bool;
 import com.glebcorp.blocks.Lexer;
 import com.glebcorp.blocks.utils.Println.println;
 import com.glebcorp.blocks.utils.Panic.panic;
@@ -17,8 +17,9 @@ import com.glebcorp.blocks.utils.Panic.panic;
 using com.glebcorp.blocks.utils.ArrayUtils;
 using com.glebcorp.blocks.utils.NullUtils;
 
-class Blocks {
-	public static final LEXER_CONFIG: LexerConfig = {
+@:publicFields
+@:tink class Blocks {
+	static final LEXER_CONFIG: LexerConfig = {
 		singleLineCommentStart: "//",
 		multilineCommentStart: "/*",
 		multilineCommentEnd: "*/",
@@ -29,49 +30,44 @@ class Blocks {
 		identifierRegex: ~/[a-zA-Z_0-9]/,
 		operatorRegex: ~/[^ \n\t\r_a-zA-Z0-9\{\}\[\]\(\)'"]/,
 		bracketed: [
-			"{" => {
-				end: "}",
-				type: BlockBrace
-			},
-			"[" => {
-				end: "]",
-				type: BlockBracket
-			},
-			"(" => {
-				end: ")",
-				type: BlockParen
-			},
+			"{" => new BracketInfo("}", BlockBrace),
+			"[" => new BracketInfo("]", BlockBrace),
+			"(" => new BracketInfo(")", BlockParen),
 		],
 		captureComments: false,
 	}
 
-	public final lexer = new Lexer(LEXER_CONFIG);
-	public final parser = new BlocksParser();
-	public final engine = new Engine();
-	public final globalScope = new Scope();
-	public final rootPath: String;
+	final lexer = new Lexer(LEXER_CONFIG);
+	final parser = new BlocksParser();
+	final engine = new Engine();
+	final globalScope = new Scope();
+	final rootPath: String = _;
 
-	public function new(rootPath: String) {
-		this.rootPath = rootPath;
-
-		var Any = engine.addType("Any");
+	function new() {
+		final Any = engine.addType("Any");
 		engine.addType("Boolean", "Any");
 		engine.addType("Number", "Any");
 		engine.addType("String", "Any");
-		var Array = engine.addType("Array", "Any");
+		final Array = engine.addType("Array", "Any");
 		engine.addType("Object", "Any");
 		engine.addType("Function", "Any");
-		var Generator = engine.addType("Generator", "Function");
+		final Generator = engine.addType("Generator", "Function");
 
 		Any.addMethod("also", f2((fun, val) -> {
 			fun.as(BFunction).call([val]);
 			return val;
 		}));
-		// Generator.addMethod("next", (gen, ?val: BValue) -> {
-		// 	return gen.as(BGenerator).nextValue(val);
-		// }).addMethod("hasNext", (gen) -> {
-		// 	return bool(!gen.as(BGenerator).ended);
-		// });
+		Generator.addMethod("next", new BFunction(args -> {
+			if (args.length == 1) {
+				return args[0].unsafe().as(BGenerator).nextValue();
+			} else if (args.length == 2) {
+				return args[0].unsafe().as(BGenerator).nextValue(args[1].unsafe());
+			} else {
+				panic("Expected 1-2 arguments");
+			}
+		})).addMethod("hasNext", f1(gen -> {
+			return bool(!gen.as(BGenerator).ended);
+		}));
 		Array.addMethod("map", f2((arr, funV) -> {
 			final fun = funV.as(BFunction);
 			return new BArray(arr.as(BArray).data.map(e -> fun.call([e])));
@@ -98,10 +94,7 @@ class Blocks {
 		// }));
 		globalScope.define("require", f1(pathV -> {
 			var path = pathV.as(BString).data;
-			var importCtx: Context = {
-				scope: new Scope(globalScope, new Set()),
-				core: this,
-			};
+			var importCtx = new Context(new Scope(globalScope, new Set()), this);
 			evalFile(path, importCtx);
 			final obj = new BObject([]);
 			for (key in importCtx.scope.exports.unwrap().keys()) {
@@ -117,26 +110,26 @@ class Blocks {
 		]));
 	}
 
-	public function evalFile(path: String, ?ctx: Context): BValue {
+	function evalFile(path: String, ?ctx: Context): BValue {
 		#if (!sys)
 		return panic('Error: This platform does not support file I/O');
 		#else
-		var filePath = rootPath + "/" + path.split(".").join("/") + ".bx";
-		var file = sys.io.File.getContent(filePath);
+		final filePath = rootPath + "/" + path.split(".").join("/") + ".bx";
+		final file = sys.io.File.getContent(filePath);
 		return eval(file, ctx);
 		#end
 	}
 
-	public function eval(source: String, ?ctx: Context): BValue {
-		var tokens = lexer.tokenize(source);
-		var exprs = parser.parseAll(tokens);
-		var context = ctx.or({scope: new Scope(globalScope), core: this});
+	function eval(source: String, ?ctx: Context): BValue {
+		final tokens = lexer.tokenize(source);
+		final exprs = parser.parseAll(tokens);
+		final context = ctx.or(new Context(new Scope(globalScope), this));
 		return exprs.map(e -> e.eval(context)).last().unwrap();
 	}
 
-	public function prettyPrint(source: String): String {
-		var tokens = lexer.tokenize(source);
-		var exprs = parser.parseAll(tokens);
+	function prettyPrint(source: String): String {
+		final tokens = lexer.tokenize(source);
+		final exprs = parser.parseAll(tokens);
 		return exprs.map(expr -> expr.toString()).join("\n");
 	}
 }

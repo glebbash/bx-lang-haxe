@@ -5,31 +5,29 @@ import com.glebcorp.blocks.utils.Panic.panic;
 
 typedef Set<T> = Map<T, Bool>;
 
-@:structInit
-class Cell {
-	public var value: BValue;
-	public var constant: Bool;
+@:publicFields
+@:tink class Cell {
+	var value: BValue = _;
+	final constant: Bool = _;
 }
 
-class Scope {
+@:publicFields
+@:tink class Scope {
 	private final data = new Map<String, Cell>();
-	private final parent: Null<Scope>;
 
-	public var exports: Null<Set<String>>;
+	private final parent: Null<Scope> = @byDefault null;
+	var exports: Null<Set<String>> = @byDefault null;
 
-	public function new(?parent: Scope, ?exports: Set<String>) {
-		this.parent = parent;
-		this.exports = exports;
-	}
+	@:nullSafety(Off) function new() {}
 
-	public function has(name: String): Bool {
+	function has(name: String): Bool {
 		return data.exists(name);
 	}
 
-	public function getCell(name: String): Cell {
+	function getCell(name: String): Cell {
 		var val = data[name];
 		if (val == null) {
-			if (this.parent == null) {
+			if (parent == null) {
 				return panic('Error: $name is not defined.');
 			}
 			return parent.getCell(name);
@@ -37,22 +35,18 @@ class Scope {
 		return val;
 	}
 
-	public function get(name: String): BValue {
-		return this.getCell(name).value;
+	function get(name: String): BValue {
+		return getCell(name).value;
 	}
 
-	public function define(name: String, value: BValue, constant = false) {
+	function define(name: String, value: BValue, constant = false) {
 		if (has(name)) {
 			panic('Error: $name is already defined.');
-        }
-        var cell: Cell = {
-			value: value,
-			constant: constant
-		};
-		data[name] = cell;
+		}
+		data[name] = new Cell(value, constant);
 	}
 
-	public function set(name: String, value: BValue) {
+	function set(name: String, value: BValue) {
 		getCell(name).value = value;
 	}
 }

@@ -7,14 +7,9 @@ import com.glebcorp.blocks.syntax.BinaryOp;
 import com.glebcorp.blocks.Core.Expression;
 
 @:publicFields
-class DoAndAssign implements Action {
-	final prec: Float;
-	final fun: BinaryFun;
-
-	function new(prec: Float, fun: BinaryFun) {
-		this.prec = prec;
-		this.fun = fun;
-	}
+@:tink class DoAndAssign implements Action {
+	final prec: Float = _;
+	final fun: BinaryFun = _;
 
 	function parse(parser: ExprParser, token: Token, assignable: Expression): DoAndAssignExpr {
 		if (!Std.isOfType(assignable, AssignableExpr)) {
@@ -23,21 +18,16 @@ class DoAndAssign implements Action {
 		return new DoAndAssignExpr(cast assignable, parser.parse(prec), fun);
 	}
 
-	function precedence(_)
+	function precedence(_) {
 		return prec;
+	}
 }
 
 @:publicFields
-class DoAndAssignExpr implements Expression {
-	final assignable: AssignableExpr;
-	final value: Expression;
-	final fun: BinaryFun;
-
-	function new(assignable: AssignableExpr, value: Expression, fun: BinaryFun) {
-		this.assignable = assignable;
-		this.value = value;
-		this.fun = fun;
-	}
+@:tink class DoAndAssignExpr implements Expression {
+	final assignable: AssignableExpr = _;
+	final value: Expression = _;
+	final fun: BinaryFun = _;
 
 	function eval(ctx: Context) {
 		final value = value.eval(ctx);
@@ -47,7 +37,7 @@ class DoAndAssignExpr implements Expression {
 		return res;
 	}
 
-	function toString(symbol = "", indent = ""): String {
-		return '${assignable.toString(symbol, indent)} = $value';
+	function toString(s = "", i = ""): String {
+		return '${assignable.toString(s, i)} = $value';
 	}
 }

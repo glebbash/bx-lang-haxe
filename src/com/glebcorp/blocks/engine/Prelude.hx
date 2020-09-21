@@ -2,7 +2,6 @@ package com.glebcorp.blocks.engine;
 
 import com.glebcorp.blocks.Core;
 import com.glebcorp.blocks.engine.Engine;
-import com.glebcorp.blocks.engine.Prelude.BVoid.VOID;
 import com.glebcorp.blocks.utils.Panic.panic;
 
 using com.glebcorp.blocks.utils.NullUtils;
@@ -33,47 +32,52 @@ class BNumber extends BWrapper<Float> {}
 //////////////////////////////////
 
 class BString extends BWrapper<String> implements BIterable<BString> {
-	public function iterator()
+	public function iterator() {
 		return new BStringIterator(data);
+	}
 }
 
 @:publicFields
-class BStringIterator implements BIterator<BString> {
+@:tink class BStringIterator implements BIterator<BString> {
 	var index = 0;
-	final str: String;
+	final str: String = _;
 
-	function new(str: String)
-		this.str = str;
-
-	function hasNext()
+	function hasNext() {
 		return index < str.length;
+	}
 
-	function next()
+	function next() {
 		return new BString(str.charAt(index++));
+	}
 }
 
 //////////////////////////////////
 
 class BArray extends BWrapper<Array<BValue>> implements BIterable<BValue> {
-	public function iterator()
+	public function iterator() {
 		return data.iterator();
+	}
 
-	override public function toString()
+	override public function toString() {
 		return '[${data.join(", ")}]';
+	}
 }
 
 //////////////////////////////////
 
 @:publicFields
 class BObject extends BWrapper<Map<String, BValue>> {
-	function get(prop: String): BValue
+	function get(prop: String): BValue {
 		return data[prop].or(panic('Prop $prop is not defined'));
+	}
 
-	function set(prop: String, val: BValue)
+	function set(prop: String, val: BValue) {
 		data[prop] = val;
+	}
 
-	function iterator()
+	function iterator() {
 		return new BObjectIterator(data.keyValueIterator());
+	}
 
 	override function toString() {
 		return '{' + [for (k => v in data.keyValueIterator()) '$k: $v'].join(", ") + '}';
@@ -81,16 +85,14 @@ class BObject extends BWrapper<Map<String, BValue>> {
 }
 
 @:publicFields
-class BObjectIterator implements BIterator<BArray> {
-	final kvIterator: KeyValueIterator<String, BValue>;
+@:tink class BObjectIterator implements BIterator<BArray> {
+	final kvIterator: KeyValueIterator<String, BValue> = _;
 
-	public function new(kvIterator: KeyValueIterator<String, BValue>)
-		this.kvIterator = kvIterator;
-
-	public function hasNext()
+	function hasNext() {
 		return kvIterator.hasNext();
+	}
 
-	public function next() {
+	function next() {
 		final pair = kvIterator.next();
 		return new BArray([new BString(pair.key), pair.value]);
 	}
@@ -98,39 +100,33 @@ class BObjectIterator implements BIterator<BArray> {
 
 //////////////////////////////////
 
-class BRange extends BValue implements BIterable<BNumber> {
-	final start: Int;
-	final stop: Int;
+@:publicFields
+@:tink class BRange extends BValue implements BIterable<BNumber> {
+	final start: Int = _;
+	final stop: Int = _;
 
-	public function new(start: Int, stop: Int) {
-		super();
-		this.start = start;
-		this.stop = stop;
+	public function iterator() {
+		return new BRangeIterator(start, stop);
 	}
 
-	public function iterator()
-		return new BRangeIterator(start, stop);
-
-	override public function toString()
+	override public function toString() {
 		return '$start..$stop';
+	}
 }
 
-class BRangeIterator extends BValue implements BIterator<BNumber> {
-	final start: Int;
-	final stop: Int;
+@:publicFields
+@:tink class BRangeIterator extends BValue implements BIterator<BNumber> {
+	final start: Int = _;
+	final stop: Int = _;
 	var index = 0;
 
-	public function new(start: Int, stop: Int) {
-		super();
-		this.start = start;
-		this.stop = stop;
+	function hasNext() {
+		return index < stop;
 	}
 
-	public function hasNext()
-		return index < stop;
-
-	public function next()
+	function next() {
 		return new BNumber(index++);
+	}
 }
 
 //////////////////////////////////
@@ -139,32 +135,34 @@ typedef BFunctionBody = (args: Array<BValue>) -> BValue;
 
 @:publicFields
 class BFunction extends BWrapper<BFunctionBody> {
-	public static inline function f1(fun: BValue->BValue): BFunction {
+	static inline function f1(fun: BValue->BValue): BFunction {
 		return new BFunction(args -> switch args {
 			case [x]: fun(x);
 			case _: panic("Expected 1 argument");
 		});
 	}
 
-	public static inline function f2(fun: (BValue, BValue) -> BValue): BFunction {
+	static inline function f2(fun: (BValue, BValue) -> BValue): BFunction {
 		return new BFunction(args -> switch args {
 			case [a, b]: fun(a, b);
 			case _: panic("Expected 2 arguments");
 		});
 	}
 
-	public static inline function f3(fun: (BValue, BValue, BValue) -> BValue): BFunction {
+	static inline function f3(fun: (BValue, BValue, BValue) -> BValue): BFunction {
 		return new BFunction(args -> switch args {
 			case [a, b, c]: fun(a, b, c);
 			case _: panic("Expected 3 arguments");
 		});
 	}
 
-	function call(args: Array<BValue>): BValue
-		return this.data(args);
+	function call(args: Array<BValue>): BValue {
+		return data(args);
+	}
 
-	override function toString()
+	override function toString() {
 		return "function";
+	}
 }
 
 //////////////////////////////////
@@ -175,11 +173,13 @@ class BReturn extends BWrapper<BValue> {}
 
 //////////////////////////////////
 
+@:publicFields
 class BVoid extends BValue {
-	public static final VOID = new BVoid();
+	static final VOID = new BVoid();
 
-	override public function toString()
+	override function toString() {
 		return "void";
+	}
 }
 
 //////////////////////////////////
@@ -189,39 +189,30 @@ interface ExecState {
 }
 
 @:publicFields
-@:structInit
-class PausedExec {
-	final execStack: Array<ExecState>;
-	var returned: BValue;
-	final async: Bool;
+@:tink class PausedExec {
+	final execStack: Array<ExecState> = _;
+	var returned: BValue = _;
+	final async: Bool = _;
 }
 
 class BPausedExec extends BWrapper<PausedExec> {
-	override public function toString()
-		return "pausedExec(" + data.returned + ")";
+	override public function toString() {
+		return 'pausedExec(${data.returned})';
+	}
 }
 
 //////////////////////////////////
 
 @:publicFields
-class BGenerator extends BValue implements BIterable<BValue> implements BIterator<BValue> {
-	var pausedExec: PausedExec = {
-		execStack: [],
-		returned: VOID,
-		async: false,
-	};
+@:tink class BGenerator extends BValue implements BIterable<BValue> implements BIterator<BValue> {
+	var pausedExec = new PausedExec([], BVoid.VOID, false);
 	var ended = false;
-	final ctx: Context;
-	final body: Expression;
+	final ctx: Context = _;
+	final body: Expression = _;
 
-	function new(ctx: Context, body: Expression) {
-		super();
-		this.ctx = ctx;
-		this.body = body;
-	}
-
-	function next()
+	function next() {
 		return nextValue();
+	}
 
 	function nextValue(?val: BValue): BValue {
 		if (ended) {
@@ -270,37 +261,25 @@ class BGenerator extends BValue implements BIterable<BValue> implements BIterato
 
 	function endOn(val: BValue) {
 		ended = true;
-		pausedExec = {
-			execStack: [],
-			returned: val.is(BReturn) ? val.as(BReturn).data : val,
-			async: false,
-		};
+		final returned = val.is(BReturn) ? val.as(BReturn).data : val;
+		pausedExec = new PausedExec([], returned, false);
 	}
 
 	function iterator(): BIterator<BValue> {
 		return this;
 	}
 
-	override function toString()
+	override function toString() {
 		return "generator";
+	}
 }
 
 @:publicFields
-class BAsyncFunction extends BValue {
-	var pausedExec: PausedExec = {
-		execStack: [],
-		returned: VOID,
-		async: true,
-	};
+@:tink class BAsyncFunction extends BValue {
+	var pausedExec = new PausedExec([], BVoid.VOID, true);
 	var ended = false;
-	final ctx: Context;
-	final body: Expression;
-
-	function new(ctx: Context, body: Expression) {
-		super();
-		this.ctx = ctx;
-		this.body = body;
-	}
+	final ctx: Context = _;
+	final body: Expression = _;
 
 	function call(cb: BFunction, ?val: BValue): BValue {
 		final ret = nextValue(val);
@@ -353,13 +332,11 @@ class BAsyncFunction extends BValue {
 
 	function endOn(val: BValue) {
 		ended = true;
-		pausedExec = {
-			execStack: [],
-			returned: val.is(BReturn) ? val.as(BReturn).data : val,
-			async: true,
-		};
+		final returned = val.is(BReturn) ? val.as(BReturn).data : val;
+		pausedExec = new PausedExec([], returned, true);
 	}
 
-	override function toString()
+	override function toString() {
 		return "asyncFunction";
+	}
 }

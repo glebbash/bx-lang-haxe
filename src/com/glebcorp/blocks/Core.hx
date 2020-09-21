@@ -10,10 +10,9 @@ typedef Atom = PrefixParser<Expression, Expression>;
 typedef Action = PostfixParser<Expression, Expression>;
 
 @:publicFields
-@:structInit
-class Context {
-	var scope: Scope;
-	var core: Blocks;
+@:tink class Context {
+	final scope: Scope = _;
+	final core: Blocks = _;
 }
 
 interface Expression {
@@ -23,19 +22,20 @@ interface Expression {
 }
 
 extern class Core {
-	public static inline function subContext(ctx: Context): Context
-		return {scope: new Scope(ctx.scope), core: ctx.core};
+	public static inline function subContext(ctx: Context): Context {
+		return new Context(new Scope(ctx.scope), ctx.core);
+	}
 }
 
-class PrecAction implements PostfixParser<Expression, Expression> {
-	public final prec: Float;
+@:publicFields
+@:tink class PrecAction implements PostfixParser<Expression, Expression> {
+	final prec: Float = _;
 
-	public function new(prec: Float)
-		this.prec = prec;
-
-	public function parse(_, _, _): Expression
+	function parse(_, _, _): Expression {
 		panic("Abstract method");
+	}
 
-	public function precedence(_)
+	function precedence(_) {
 		return prec;
+	}
 }

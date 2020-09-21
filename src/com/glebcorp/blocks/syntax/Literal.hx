@@ -11,7 +11,6 @@ import com.glebcorp.blocks.engine.Prelude;
 using com.glebcorp.blocks.utils.NullUtils;
 using com.glebcorp.blocks.utils.Slice;
 
-
 class Literal implements Atom {
 	public static final LITERAL = new Literal();
 
@@ -30,15 +29,15 @@ class Literal implements Atom {
 	}
 }
 
-class LiteralExpr implements Expression {
-    public final value: BValue;
+@:publicFields
+@:tink class LiteralExpr implements Expression {
+	final value: BValue = _;
 
-    public function new(value: BValue)
-        this.value = value;
+	function eval(ctx: Context) {
+		return value;
+	}
 
-    public function eval(ctx: Context)
-        return value;
-
-    public function toString(?_, ?_)
-        return value.toString();
+	function toString(?_, ?_) {
+		return value.toString();
+	}
 }

@@ -29,34 +29,33 @@ enum TokenValue {
 
 @:expose("Position")
 @:publicFields
-@:structInit
-class Position {
-	final line: Int;
-	final column: Int;
+@:tink class Position {
+	final line: Int = _;
+	final column: Int = _;
 
-	function toString()
+	function toString() {
 		return 'line $line, col: $column';
+	}
 }
 
 @:expose("Token")
 @:publicFields
-@:structInit
-class Token {
-	final type: TokenType;
-	final start: Position;
-	final end: Position;
-	final value: TokenValue;
+@:tink class Token {
+	final type: TokenType = _;
+	final value: TokenValue = _;
+	final start: Position = _;
+	final end: Position = _;
 
-	function toString()
-		return '$type(value: $value, start: [${start.line}, ${start.column}], end: [${start.line}, ${start.column}])';
+	function toString() {
+		return '$type(value: $value, start: [${start.line}, ${start.column}], end: [${end.line}, ${end.column}])';
+	}
 }
 
 @:expose("BracketInfo")
 @:publicFields
-@:structInit
-class BracketInfo {
-	final end: String;
-	final type: TokenType;
+@:tink class BracketInfo {
+	final end: String = _;
+	final type: TokenType = _;
 }
 
 @:expose("LexerConfig")
@@ -77,10 +76,10 @@ class LexerConfig {
 }
 
 @:expose("Lexer")
-class Lexer {
+@:tink class Lexer {
 	private static inline final EOF = null;
 
-	private var config: LexerConfig;
+	private final config: LexerConfig = _;
 	private var source: String = "";
 	private var prevRow: Int = 1;
 	private var prevCol: Int = 0;
@@ -89,15 +88,11 @@ class Lexer {
 	private var offset: Int = -1;
 	private var char: CharOrEOF = EOF;
 
-	public function new(config: LexerConfig) {
-		this.config = config;
-	}
-
 	public function tokenize(source: String): Array<Tokens> {
 		reset(source);
-		var exprs: Array<Tokens> = [];
+		final exprs: Array<Tokens> = [];
 		while (true) {
-			var comments: Tokens = [];
+			final comments: Tokens = [];
 			skipWhitespace(comments);
 			if (comments.length > 0) {
 				exprs.push(comments);
@@ -110,8 +105,8 @@ class Lexer {
 		return exprs;
 	}
 
-	function reset(source: String) {
-		this.source = source;
+	function reset(src: String) {
+		source = src;
 		prevRow = 1;
 		prevCol = 0;
 		row = 1;
@@ -122,9 +117,9 @@ class Lexer {
 	}
 
 	function exprIndented(end: CharOrEOF): Tokens {
-		var startRow = row;
-		var startCol = col;
-		var expr: Tokens = [];
+		final startRow = row;
+		final startCol = col;
+		final expr: Tokens = [];
 		while (true) {
 			skipWhitespace(expr);
 
@@ -134,7 +129,7 @@ class Lexer {
 			if (row == startRow) {
 				expr.push(atom());
 			} else if (col > startCol) {
-				var last = expr.last().unwrap();
+				final last = expr.last().unwrap();
 				if (last.type == TokenType.BlockIndent) {
 					switch (last.value) {
 						case Tokens(tokens):
@@ -163,7 +158,7 @@ class Lexer {
 		if ('"' == char || "'" == char) {
 			return token(TokenType.String, () -> TokenValue.Text(string(char.unsafe())));
 		}
-		var bracketInfo = config.bracketed[char.unsafe()];
+		final bracketInfo = config.bracketed[char.unsafe()];
 		if (bracketInfo != null) {
 			return exprBracketed(bracketInfo);
 		}
@@ -178,10 +173,10 @@ class Lexer {
 
 	function exprBracketed(info: BracketInfo): Token {
 		return token(info.type, () -> {
-			var exprs: Array<Tokens> = [];
+			final exprs: Array<Tokens> = [];
 			next(); // skip opening bracket
 			while (true) {
-				var comments: Array<Token> = [];
+				final comments: Array<Token> = [];
 				skipWhitespace(comments);
 				if (comments.length > 0) {
 					exprs.push(comments);
@@ -211,7 +206,7 @@ class Lexer {
 	}
 
 	function string(ending: String): String {
-		var multiEnding = ending + ending + ending;
+		final multiEnding = ending + ending + ending;
 		if (skipSequence(multiEnding + "\n")) {
 			return multilineString(multiEnding);
 		}
@@ -238,31 +233,23 @@ class Lexer {
 	}
 
 	function multilineString(ending: String): String {
-		var buffer = ending.charAt(0) + char;
+		var buff = ending.charAt(0) + char;
 		while (true) {
 			if (skipSequence(ending)) {
-				return processML(buffer);
+				return processML(buff);
 			}
-			buffer += nextExceptEOF();
+			buff += nextExceptEOF();
 		}
 	}
 
 	function token(type: TokenType, fun: () -> TokenValue, realStart: Null<Position> = null): Token {
-		var start = realStart != null ? realStart : pos();
-		return {
-			type: type,
-			value: fun(),
-			start: start,
-			end: {
-				line: this.prevRow,
-				column: this.prevCol
-			},
-		};
+		final start = realStart != null ? realStart : pos();
+		return new Token(type, fun(), start, new Position(prevRow, prevCol));
 	}
 
 	function skipWhitespace(comments: Tokens) {
 		while (true) {
-			var start: Position = pos();
+			final start: Position = pos();
 			if (config.singleLineCommentStart != null && skipSequence(config.singleLineCommentStart)) {
 				if (config.captureComments) {
 					comments.push(token(TokenType.Comment, () -> TokenValue.Text(sequence(~/[^\n]/)), start));
@@ -291,7 +278,7 @@ class Lexer {
 				return true;
 			}
 		} else if (offset + string.length <= source.length) {
-			var nextChar = source.substr(offset, string.length);
+			final nextChar = source.substr(offset, string.length);
 			if (nextChar == string) {
 				for (_ in 0...string.length) {
 					next();
@@ -350,12 +337,12 @@ class Lexer {
 	}
 
 	function nextExceptEOF(): String {
-		var c = next();
+		final c = next();
 		return c == EOF ? panicUnexpected() : c.unsafe();
 	}
 
 	function panicUnexpected(): Any {
-		return syntaxError(char == EOF ? "Unexpected EOF" : 'Unexpected char \'${char}\'', pos());
+		return syntaxError(char == EOF ? "Unexpected EOF" : 'Unexpected char \'$char\'', pos());
 	}
 
 	function escapeChar(char: String): String {
@@ -368,16 +355,16 @@ class Lexer {
 	}
 
 	function pos(): Position {
-		return {line: row, column: col};
+		return new Position(row, col);
 	}
 
 	function processML(string: String): String {
-		var lines = string.split("\n");
-		var lastLine = lines.pop();
+		final lines = string.split("\n");
+		final lastLine = lines.pop();
 		if (lastLine == null) {
 			return syntaxError("Invalid multiline string", pos());
 		}
-		var padLength = lastLine.length - 1;
+		final padLength = lastLine.length - 1;
 		return lines.map(l -> l.substr(padLength)).join("\n") + "\n";
 	}
 }

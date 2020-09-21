@@ -1,11 +1,8 @@
 package com.glebcorp.blocks;
 
-import com.glebcorp.blocks.Lexer.TokenValue;
-import com.glebcorp.blocks.Lexer.Tokens;
+import com.glebcorp.blocks.Lexer;
 import com.glebcorp.blocks.utils.Streams.Stream;
 import com.glebcorp.blocks.utils.Streams.stream;
-import com.glebcorp.blocks.Lexer.TokenType;
-import com.glebcorp.blocks.Lexer.Token;
 import com.glebcorp.blocks.utils.SyntaxError.syntaxError;
 
 using com.glebcorp.blocks.utils.NullUtils;
@@ -23,35 +20,31 @@ interface PostfixParser<E, T: E> {
 @:publicFields
 @:structInit
 class TokenCondition {
-	var type: Null<TokenType> = null;
-	var value: Null<String> = null;
-	var complexType: Null<String> = null;
+	final type: Null<TokenType> = null;
+	final value: Null<String> = null;
+	final complexType: Null<String> = null;
 }
 
 @:publicFields
 class Parser<E> {
-	private static final START_TOKEN: Token = {
-		type: TokenType.Comment,
-		value: TokenValue.Text(""),
-		start: {line: 1, column: 1},
-		end: {line: 1, column: 1},
-	}
+	private static final START_TOKEN = new Token(TokenType.Comment, TokenValue.Text(""), new Position(1, 1), new Position(1, 1));
 	private static final EMPTY_STREAM: Stream<Token> = stream([]);
 
 	private var prevToken = START_TOKEN;
 
-	var prefix: Map<String, PrefixParser<E, E>>;
-	var postfix: Map<String, PostfixParser<E, E>>;
+	final prefix: Map<String, PrefixParser<E, E>>;
+	final postfix: Map<String, PostfixParser<E, E>>;
 	var nextToken: Stream<Token>;
 
-	function new(prefix: Map<String, PrefixParser<E, E>>, postfix: Map<String, PostfixParser<E, E>>, ?nextToken: Stream<Token>) {
-		this.prefix = prefix;
-		this.postfix = postfix;
-		this.nextToken = nextToken == null ? EMPTY_STREAM : nextToken;
+	function new(pre, post, ?tokens) {
+		prefix = pre;
+		postfix = post;
+		nextToken = tokens == null ? EMPTY_STREAM : tokens;
 	}
 
-	function subParser(expr: Tokens): Parser<E>
+	function subParser(expr: Tokens): Parser<E> {
 		return new Parser(prefix, postfix, stream(expr));
+	}
 
 	function parseAll(exprs: Array<Tokens>): Array<E> {
 		return exprs.map(expr -> {
@@ -65,7 +58,7 @@ class Parser<E> {
 		var expr = expectPrefixParser(token).parse(this, token);
 
 		while (precedence < tokenPrecedence()) {
-			var token = next();
+			token = next();
 			expr = expectPostfixParser(token).parse(this, token, expr);
 		}
 
@@ -73,46 +66,50 @@ class Parser<E> {
 	}
 
 	function parseToEnd(precedence = 0.0): E {
-		var expr = parse(precedence);
+		final expr = parse(precedence);
 		checkTrailing();
 		return expr;
 	}
 
 	function checkTrailing() {
-		var next = nextToken(false);
+		final next = nextToken(false);
 		if (next != null) {
 			unexpectedToken(next);
 		}
 	}
 
 	function tokenPrecedence(): Float {
-		var token = nextToken(false);
-		if (token == null)
+		final token = nextToken(false);
+		if (token == null) {
 			return 0;
+		}
 
-		var parser = getPostfixParser(token);
-		if (parser == null)
+		final parser = getPostfixParser(token);
+		if (parser == null) {
 			return 0;
+		}
 
 		return parser.precedence(this);
 	}
 
-	function getPostfixParser(token: Token)
+	function getPostfixParser(token: Token) {
 		return postfix[getTokenType(token)];
+	}
 
 	function expectPostfixParser(token: Token): PostfixParser<E, E> {
-		var parser = getPostfixParser(token);
+		final parser = getPostfixParser(token);
 		if (parser == null) {
 			return syntaxError("Invalid prefix operator: " + token.value, token.start);
 		}
 		return parser;
 	}
 
-	function getPrefixParser(token: Token)
+	function getPrefixParser(token: Token) {
 		return prefix[getTokenType(token)];
+	}
 
 	function expectPrefixParser(token: Token): PrefixParser<E, E> {
-		var parser = getPrefixParser(token);
+		final parser = getPrefixParser(token);
 		if (parser == null) {
 			return syntaxError("Invalid operator: " + token.value, token.start);
 		}
@@ -127,7 +124,7 @@ class Parser<E> {
 	}
 
 	function nextIs(cond: TokenCondition): Bool {
-		var token = nextToken(false);
+		final token = nextToken(false);
 		if (token == null) {
 			return false;
 		}
@@ -144,7 +141,7 @@ class Parser<E> {
 	}
 
 	function next(consume = true): Token {
-		var token = nextToken(consume);
+		final token = nextToken(consume);
 		if (token == null) {
 			return unexpectedToken(token);
 		}
@@ -175,7 +172,9 @@ class Parser<E> {
 	}
 
 	function unexpectedToken(token: Null<Token>): Any {
-		return token == null ? syntaxError("Unexpected end of expression",
-			this.prevToken.end) : syntaxError('Unexpected token: \'${getTokenType(token)}\'', token.start);
+		if (token == null) {
+			return syntaxError("Unexpected end of expression", prevToken.end);
+		}
+		return syntaxError('Unexpected token: \'${getTokenType(token)}\'', token.start);
 	}
 }

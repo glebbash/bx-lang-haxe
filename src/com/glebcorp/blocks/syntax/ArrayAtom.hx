@@ -37,12 +37,8 @@ class ArrayAtom implements Atom {
 }
 
 @:publicFields
-class ArrayExpr implements AssignableExpr {
-	final items: Array<Expression>;
-
-	function new(items: Array<Expression>) {
-		this.items = items;
-	}
+@:tink class ArrayExpr implements AssignableExpr {
+	final items: Array<Expression> = _;
 
 	function isValid() {
 		return items.every(item -> Std.isOfType(item, IdentExpr));
@@ -60,11 +56,11 @@ class ArrayExpr implements AssignableExpr {
 			return;
 		}
 		final arr = value.as(BArray).data;
-		if (this.items.length > arr.length) {
-			panic('Trying to assign ${arr.length} element(s) to ${this.items.length} name(s)');
+		if (items.length > arr.length) {
+			panic('Trying to assign ${arr.length} element(s) to ${items.length} name(s)');
 		}
 		for (i in 0...items.length) {
-			final name = cast(this.items[i], IdentExpr).name;
+			final name = cast(items[i], IdentExpr).name;
 			final val = arr[i];
 			ctx.scope.define(name, val, constant);
 		}
@@ -76,7 +72,7 @@ class ArrayExpr implements AssignableExpr {
 			panic('Trying to assign ${arr.length} element(s) to ${items.length} name(s)');
 		}
 		for (i in 0...items.length) {
-			final name = cast(this.items[i], IdentExpr).name;
+			final name = cast(items[i], IdentExpr).name;
 			final val = arr[i];
 			ctx.scope.set(name, val);
 		}

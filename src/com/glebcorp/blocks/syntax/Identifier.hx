@@ -31,14 +31,12 @@ class Identifier implements Atom {
 }
 
 @:publicFields
-class IdentExpr implements AssignableExpr implements Exportable {
-	final name: String;
+@:tink class IdentExpr implements AssignableExpr implements Exportable {
+	final name: String = _;
 
-	function new(name: String)
-		this.name = name;
-
-	function eval(ctx: Context)
+	function eval(ctx: Context) {
 		return ctx.scope.get(name);
+	}
 
 	function export(exports: Set<String>) {
 		if (exports.exists(name)) {
@@ -47,11 +45,13 @@ class IdentExpr implements AssignableExpr implements Exportable {
 		exports[name] = true;
 	}
 
-	function isDefinable()
+	function isDefinable() {
 		return true;
+	}
 
-	function isValid()
+	function isValid() {
 		return true;
+	}
 
 	function define(ctx: Context, value: BValue, constant: Bool) {
 		ctx.scope.define(name, value, constant);
@@ -61,6 +61,7 @@ class IdentExpr implements AssignableExpr implements Exportable {
 		ctx.scope.set(name, value);
 	}
 
-	function toString(?_, ?_)
+	function toString(?_, ?_) {
 		return name;
+	}
 }

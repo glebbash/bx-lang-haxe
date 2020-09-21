@@ -66,21 +66,52 @@ class BArray extends BWrapper<Array<BValue>> implements BIterable<BValue> {
 //////////////////////////////////
 
 @:publicFields
-class BObject extends BWrapper<Map<String, BValue>> {
+class BObject extends BValue {
+	private final data: Map<String, BValue> = [];
+	private final keys: Array<String> = [];
+
+	function new() {
+		super();
+	}
+
 	function get(prop: String): BValue {
 		return data[prop].or(panic('Prop $prop is not defined'));
 	}
 
 	function set(prop: String, val: BValue) {
+		if (!data.exists(prop)) {
+			keys.push(prop);
+		}
 		data[prop] = val;
+		return this;
+	}
+
+	function keyValueIterator(): KeyValueIterator<String, BValue> {
+		return new KVIterator(data, keys);
 	}
 
 	function iterator() {
-		return new BObjectIterator(data.keyValueIterator());
+		return new BObjectIterator(keyValueIterator());
 	}
 
 	override function toString() {
-		return '{' + [for (k => v in data.keyValueIterator()) '$k: $v'].join(", ") + '}';
+		return '{' + [for (k => v in this) '$k: $v'].join(", ") + '}';
+	}
+}
+
+@:publicFields
+@:tink class KVIterator<T> {
+	final data: Map<String, T> = _;
+	final keys: Array<String> = _;
+	var index = 0;
+
+	function hasNext() {
+		return index < keys.length;
+	}
+
+	function next() {
+		final key = keys[index++];
+		return {key: key, value: data[key].unwrap()};
 	}
 }
 

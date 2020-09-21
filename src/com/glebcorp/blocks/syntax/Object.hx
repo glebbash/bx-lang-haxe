@@ -68,15 +68,15 @@ class Object implements Atom {
 	}
 
 	function eval(ctx: Context) {
-		final data: Map<String, BValue> = [];
+		final obj = new BObject();
 		for (pair in pairs) {
-			data[pair.name] = if (pair.value != null) {
+			obj.set(pair.name, if (pair.value != null) {
 				pair.value.unsafe().eval(ctx);
 			} else {
 				new IdentExpr(pair.name).eval(ctx);
-			}
+			});
 		}
-		return new BObject(data);
+		return obj;
 	}
 
 	function define(ctx: Context, value: BValue, constant: Bool) {
@@ -86,16 +86,16 @@ class Object implements Atom {
 			}
 			return;
 		}
-		final obj = value.as(BObject).data;
+		final obj = value.as(BObject);
 		for (pair in pairs) {
-			ctx.scope.define(pair.getDef(), obj[pair.name].unwrap(), constant);
+			ctx.scope.define(pair.getDef(), obj.get(pair.name), constant);
 		}
 	}
 
 	function assign(ctx: Context, value: BValue) {
-		final obj = value.as(BObject).data;
+		final obj = value.as(BObject);
 		for (pair in pairs) {
-			ctx.scope.set(pair.getDef(), obj[pair.name].unwrap());
+			ctx.scope.set(pair.getDef(), obj.get(pair.name));
 		}
 	}
 

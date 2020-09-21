@@ -18,7 +18,7 @@ using com.glebcorp.blocks.utils.ArrayUtils;
 using com.glebcorp.blocks.utils.NullUtils;
 
 @:publicFields
-@:tink class Blocks {
+class Blocks {
 	static final LEXER_CONFIG: LexerConfig = {
 		singleLineCommentStart: "//",
 		multilineCommentStart: "/*",
@@ -41,9 +41,10 @@ using com.glebcorp.blocks.utils.NullUtils;
 	final parser = new BlocksParser();
 	final engine = new Engine();
 	final globalScope = new Scope();
-	final rootPath: String = _;
+	final rootPath: String;
 
-	function new() {
+	function new(path: String) {
+		rootPath = path;
 		final Any = engine.addType("Any");
 		engine.addType("Boolean", "Any");
 		engine.addType("Number", "Any");
@@ -96,18 +97,16 @@ using com.glebcorp.blocks.utils.NullUtils;
 			var path = pathV.as(BString).data;
 			var importCtx = new Context(new Scope(globalScope, new Set()), this);
 			evalFile(path, importCtx);
-			final obj = new BObject([]);
+			final obj = new BObject();
 			for (key in importCtx.scope.exports.unwrap().keys()) {
-				obj.data[key] = importCtx.scope.get(key);
+				obj.set(key, importCtx.scope.get(key));
 			}
 			return obj;
 		}), true);
 		globalScope.define("type", f1(val -> new BString(val.type)));
-		globalScope.define("Parse", new BObject([
-			"number" => f1(str -> {
-				return new BNumber(Std.parseFloat(str.as(BString).data));
-			})
-		]));
+		globalScope.define("Parse", new BObject().set("number", f1(str -> {
+			return new BNumber(Std.parseFloat(str.as(BString).data));
+		})));
 	}
 
 	function evalFile(path: String, ?ctx: Context): BValue {

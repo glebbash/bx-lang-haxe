@@ -75,9 +75,9 @@ class BlocksParser extends Parser<Expression> {
 		if (a.is(BString)) {
 			final template = a.as(BString).data;
 			if (b.is(BObject)) {
-				return new BString(Format.formatN(template, b.as(BObject).data));
+				return new BString(Format.formatN(template, b.as(BObject)));
 			} else {
-				return new BString(Format.format(template, b.as(BArray).data));
+				return new BString(Format.format(template, b.as(BArray)));
 			}
 		}
 		return num(a.num() % b.num());

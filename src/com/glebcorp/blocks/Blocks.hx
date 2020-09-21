@@ -14,7 +14,7 @@ import com.glebcorp.blocks.Lexer;
 import com.glebcorp.blocks.utils.Println.println;
 import com.glebcorp.blocks.utils.Panic.panic;
 
-using com.glebcorp.blocks.utils.ArrayLast;
+using com.glebcorp.blocks.utils.ArrayUtils;
 using com.glebcorp.blocks.utils.NullUtils;
 
 class Blocks {
@@ -79,7 +79,7 @@ class Blocks {
 			final fun = funV.as(BFunction);
 			return Lambda.fold(arr.as(BArray).data, (acc, val) -> fun.call([acc, val]), init);
 		}));
-		globalScope.define("print", new BFunction((val) -> {
+		globalScope.define("print", f1(val -> {
 			println(val.toString());
 			return VOID;
 		}));

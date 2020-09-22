@@ -1,10 +1,10 @@
 package com.glebcorp.blocks.syntax;
 
+import com.glebcorp.blocks.Core.Expression;
+import com.glebcorp.blocks.Core;
 import com.glebcorp.blocks.Lexer.Token;
 import com.glebcorp.blocks.syntax.Assign;
-import com.glebcorp.blocks.Core;
 import com.glebcorp.blocks.syntax.BinaryOp;
-import com.glebcorp.blocks.Core.Expression;
 
 @:tink class DoAndAssign implements Action {
 	final prec: Float = _;

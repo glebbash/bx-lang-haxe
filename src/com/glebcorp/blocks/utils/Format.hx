@@ -3,8 +3,8 @@ package com.glebcorp.blocks.utils;
 import com.glebcorp.blocks.engine.Engine;
 import com.glebcorp.blocks.engine.Prelude;
 
-using StringTools;
 using Lambda;
+using StringTools;
 
 class Format {
     static function format(template: String, args: BArray): String {

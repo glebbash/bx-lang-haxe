@@ -1,8 +1,8 @@
 package com.glebcorp.blocks;
 
+import com.glebcorp.blocks.Parser;
 import com.glebcorp.blocks.engine.Engine.BValue;
 import com.glebcorp.blocks.engine.Scope;
-import com.glebcorp.blocks.Parser;
 import com.glebcorp.blocks.utils.Panic.panic;
 
 typedef ExprParser = Parser<Expression>;

@@ -1,7 +1,7 @@
 package com.glebcorp.blocks.syntax;
 
-import com.glebcorp.blocks.Lexer;
 import com.glebcorp.blocks.Core;
+import com.glebcorp.blocks.Lexer;
 import com.glebcorp.blocks.utils.SyntaxError.syntaxError;
 
 class Paren implements Atom {

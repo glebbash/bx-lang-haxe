@@ -1,12 +1,12 @@
 package com.glebcorp.blocks.syntax;
 
-import com.glebcorp.blocks.engine.Engine;
-import com.glebcorp.blocks.syntax.Identifier;
-import com.glebcorp.blocks.engine.Prelude.BArray;
-import com.glebcorp.blocks.Lexer;
 import com.glebcorp.blocks.Core;
-import com.glebcorp.blocks.syntax.Assign.AssignableExpr;
+import com.glebcorp.blocks.Lexer;
+import com.glebcorp.blocks.engine.Engine;
+import com.glebcorp.blocks.engine.Prelude.BArray;
 import com.glebcorp.blocks.engine.Prelude.BVoid.VOID;
+import com.glebcorp.blocks.syntax.Assign.AssignableExpr;
+import com.glebcorp.blocks.syntax.Identifier;
 import com.glebcorp.blocks.utils.Panic.panic;
 
 using com.glebcorp.blocks.utils.ArrayUtils;

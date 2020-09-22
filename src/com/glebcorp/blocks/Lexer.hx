@@ -2,8 +2,8 @@ package com.glebcorp.blocks;
 
 import com.glebcorp.blocks.utils.SyntaxError.syntaxError;
 
-using com.glebcorp.blocks.utils.NullUtils;
 using com.glebcorp.blocks.utils.ArrayUtils;
+using com.glebcorp.blocks.utils.NullUtils;
 
 typedef Tokens = Array<Token>;
 typedef CharOrEOF = Null<String>;

@@ -1,23 +1,23 @@
 package com.glebcorp.blocks;
 
-import haxe.Timer;
-import com.glebcorp.blocks.engine.Prelude;
+import com.glebcorp.blocks.BlocksParser.bool;
+import com.glebcorp.blocks.Core;
+import com.glebcorp.blocks.Lexer;
+import com.glebcorp.blocks.engine.Engine;
 import com.glebcorp.blocks.engine.Prelude.BFunction.f1;
 import com.glebcorp.blocks.engine.Prelude.BFunction.f2;
 import com.glebcorp.blocks.engine.Prelude.BFunction.f3;
-import com.glebcorp.blocks.Core;
-import com.glebcorp.blocks.engine.Scope;
-import com.glebcorp.blocks.engine.Engine;
 import com.glebcorp.blocks.engine.Prelude.BVoid.VOID;
-import com.glebcorp.blocks.BlocksParser.bool;
-import com.glebcorp.blocks.Lexer;
-import com.glebcorp.blocks.utils.Println.println;
+import com.glebcorp.blocks.engine.Prelude;
+import com.glebcorp.blocks.engine.Scope;
 import com.glebcorp.blocks.utils.Panic.panic;
+import com.glebcorp.blocks.utils.Println.println;
+import haxe.Timer;
 
 using com.glebcorp.blocks.utils.ArrayUtils;
 using com.glebcorp.blocks.utils.NullUtils;
 
-class Blocks {
+@:tink class Blocks {
 	static final LEXER_CONFIG: LexerConfig = {
 		singleLineCommentStart: "//",
 		multilineCommentStart: "/*",
@@ -40,18 +40,17 @@ class Blocks {
 	final parser = new BlocksParser();
 	final engine = new Engine();
 	final globalScope = new Scope();
-	final rootPath: String;
+	final rootPath: String = _;
 
-	function new(path: String) {
-		rootPath = path;
+	function new() {
 		final Any = engine.addType("Any");
-		engine.addType("Boolean", "Any");
-		engine.addType("Number", "Any");
-		engine.addType("String", "Any");
-		final Array = engine.addType("Array", "Any");
-		engine.addType("Object", "Any");
-		engine.addType("Function", "Any");
-		final Generator = engine.addType("Generator", "Function");
+		Any.extend("Boolean");
+		Any.extend("Number");
+		Any.extend("String");
+		final Array = Any.extend("Array");
+		Any.extend("Object");
+		final Function = Any.extend("Function");
+		final Generator = Function.extend("Generator");
 
 		Any.addMethod("also", f2((fun, val) -> {
 			fun.as(BFunction).call([val]);

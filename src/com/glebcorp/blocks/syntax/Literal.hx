@@ -1,11 +1,11 @@
 package com.glebcorp.blocks.syntax;
 
-import com.glebcorp.blocks.Core;
 import com.glebcorp.blocks.Core.Context;
-import com.glebcorp.blocks.engine.Engine.BValue;
-import com.glebcorp.blocks.Core.Expression;
-import com.glebcorp.blocks.Lexer.Token;
 import com.glebcorp.blocks.Core.ExprParser;
+import com.glebcorp.blocks.Core.Expression;
+import com.glebcorp.blocks.Core;
+import com.glebcorp.blocks.Lexer.Token;
+import com.glebcorp.blocks.engine.Engine.BValue;
 import com.glebcorp.blocks.engine.Prelude;
 
 using com.glebcorp.blocks.utils.NullUtils;

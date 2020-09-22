@@ -1,8 +1,8 @@
 package com.glebcorp.blocks.syntax;
 
-import com.glebcorp.blocks.engine.Engine;
-import com.glebcorp.blocks.Lexer.Token;
 import com.glebcorp.blocks.Core;
+import com.glebcorp.blocks.Lexer.Token;
+import com.glebcorp.blocks.engine.Engine;
 
 typedef BinaryFun = (a: BValue, b: BValue) -> BValue;
 

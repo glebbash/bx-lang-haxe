@@ -1,9 +1,9 @@
 package com.glebcorp.blocks.syntax;
 
-import com.glebcorp.blocks.Lexer;
-import com.glebcorp.blocks.syntax.ArrayAtom;
-import com.glebcorp.blocks.engine.Prelude;
 import com.glebcorp.blocks.Core;
+import com.glebcorp.blocks.Lexer;
+import com.glebcorp.blocks.engine.Prelude;
+import com.glebcorp.blocks.syntax.ArrayAtom;
 
 class Call extends PrecAction {
 	override function parse(parser: ExprParser, token: Token, expr: Expression): CallExpr {

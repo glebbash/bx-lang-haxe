@@ -1,9 +1,9 @@
 package com.glebcorp.blocks.utils;
 
-using com.glebcorp.blocks.utils.ArrayUtils;
 import com.glebcorp.blocks.engine.Engine;
 
 using Type;
+using com.glebcorp.blocks.utils.ArrayUtils;
 using com.glebcorp.blocks.utils.NullUtils;
 
 class ClassName {

@@ -1,6 +1,6 @@
 package com.glebcorp.blocks.engine;
 
-import com.glebcorp.blocks.engine.Engine.BValue;
+import com.glebcorp.blocks.engine.Engine;
 import com.glebcorp.blocks.utils.Panic.panic;
 
 typedef Set<T> = Map<T, Bool>;

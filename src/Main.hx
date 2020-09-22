@@ -1,6 +1,6 @@
-import com.glebcorp.blocks.Lexer;
-import com.glebcorp.blocks.BlocksParser;
 import com.glebcorp.blocks.Blocks;
+import com.glebcorp.blocks.BlocksParser;
+import com.glebcorp.blocks.Lexer;
 import com.glebcorp.blocks.utils.Println.println;
 
 class Main {

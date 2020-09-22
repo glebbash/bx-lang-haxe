@@ -3,9 +3,9 @@ package com.glebcorp.blocks.engine;
 import com.glebcorp.blocks.engine.Prelude.BFunction;
 import com.glebcorp.blocks.utils.Panic.panic;
 
+using com.glebcorp.blocks.utils.ArrayUtils;
 using com.glebcorp.blocks.utils.ClassName;
 using com.glebcorp.blocks.utils.NullUtils;
-using com.glebcorp.blocks.utils.ArrayUtils;
 
 class Engine {
 	final types: Map<String, BType> = [];
@@ -32,6 +32,10 @@ class Engine {
 	final name: String = _;
 	final parent: Null<String> = _;
 	private final methods: Map<String, Array<BFunction>> = [];
+
+	inline function extend(subType: String): BType {
+		return engine.addType(subType, name);
+	}
 
 	function addMethod(name: String, method: BFunction) {
 		if (!methods.exists(name)) {

@@ -1,12 +1,12 @@
 package com.glebcorp.blocks.syntax;
 
+import com.glebcorp.blocks.Core;
+import com.glebcorp.blocks.Lexer;
+import com.glebcorp.blocks.engine.Engine;
+import com.glebcorp.blocks.engine.Scope;
 import com.glebcorp.blocks.syntax.Assign;
 import com.glebcorp.blocks.syntax.Export;
-import com.glebcorp.blocks.engine.Engine;
 import com.glebcorp.blocks.utils.Panic.panic;
-import com.glebcorp.blocks.engine.Scope;
-import com.glebcorp.blocks.Lexer;
-import com.glebcorp.blocks.Core;
 
 class Identifier implements Atom {
 	static final PARSER = new Identifier();

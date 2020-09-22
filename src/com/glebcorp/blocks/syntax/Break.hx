@@ -1,8 +1,8 @@
 package com.glebcorp.blocks.syntax;
 
-import com.glebcorp.blocks.engine.Prelude;
-import com.glebcorp.blocks.Lexer;
 import com.glebcorp.blocks.Core;
+import com.glebcorp.blocks.Lexer;
+import com.glebcorp.blocks.engine.Prelude;
 
 using com.glebcorp.blocks.utils.NullUtils;
 

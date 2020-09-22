@@ -12,7 +12,7 @@ using com.glebcorp.blocks.utils.NullUtils;
 using com.glebcorp.blocks.utils.Slice;
 
 class Literal implements Atom {
-	static final LITERAL = new Literal();
+	static final PARSER = new Literal();
 
 	private function new() {}
 

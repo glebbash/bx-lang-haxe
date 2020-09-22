@@ -1,31 +1,30 @@
 package com.glebcorp.blocks;
 
+import com.glebcorp.blocks.Core;
+import com.glebcorp.blocks.engine.Engine;
+import com.glebcorp.blocks.engine.Prelude;
 import com.glebcorp.blocks.syntax.Call;
 import com.glebcorp.blocks.syntax.DoAndAssign;
 import com.glebcorp.blocks.syntax.UnaryOp;
-import com.glebcorp.blocks.engine.Engine;
-import com.glebcorp.blocks.engine.Prelude;
-import com.glebcorp.blocks.utils.RelativePrecedence;
 import com.glebcorp.blocks.syntax.BinaryOp;
-import com.glebcorp.blocks.Core;
-import com.glebcorp.blocks.utils.Format;
-import com.glebcorp.blocks.syntax.Identifier.IDENT;
+import com.glebcorp.blocks.syntax.Identifier;
 import com.glebcorp.blocks.syntax.Literal;
 import com.glebcorp.blocks.syntax.Assign;
-import com.glebcorp.blocks.syntax.Literal.LITERAL;
-import com.glebcorp.blocks.syntax.ArrayAtom.ARRAY;
-import com.glebcorp.blocks.syntax.Paren.PAREN;
-import com.glebcorp.blocks.syntax.Object.OBJECT;
-import com.glebcorp.blocks.syntax.Return.RETURN;
-import com.glebcorp.blocks.syntax.Break.BREAK;
-import com.glebcorp.blocks.syntax.Continue.CONTINUE;
-import com.glebcorp.blocks.syntax.Yield.YIELD;
-import com.glebcorp.blocks.syntax.Await.AWAIT;
+import com.glebcorp.blocks.syntax.ArrayAtom;
+import com.glebcorp.blocks.syntax.Paren;
+import com.glebcorp.blocks.syntax.Object;
+import com.glebcorp.blocks.syntax.Return;
+import com.glebcorp.blocks.syntax.Break;
+import com.glebcorp.blocks.syntax.Continue;
+import com.glebcorp.blocks.syntax.Yield;
+import com.glebcorp.blocks.syntax.Await;
+import com.glebcorp.blocks.utils.RelativePrecedence;
+import com.glebcorp.blocks.utils.Format;
 import com.glebcorp.blocks.utils.Panic.panic;
 
-using com.glebcorp.blocks.utils.NullUtils;
 using com.glebcorp.blocks.BlocksParser.BValueUtils;
 using com.glebcorp.blocks.BlocksParser.ExpectNo;
+using com.glebcorp.blocks.utils.NullUtils;
 
 extern class BValueUtils {
 	static inline function num(val: BValue): Float {
@@ -92,13 +91,6 @@ class BlocksParser extends Parser<Expression> {
 	function new() {
 		super([], []);
 		var prec = RelativePrecedence.precedence();
-		
-		addMacro("<IDENT>", IDENT);
-		addMacro("<NUMBER>", LITERAL);
-		addMacro("<STRING>", LITERAL);
-		addMacro("<BLOCK_PAREN>", PAREN);
-		addMacro("<BLOCK_BRACKET>", ARRAY);
-		addMacro("<BLOCK_BRACE>", OBJECT);
 
 		binaryOp(prec("+").moreThan("MIN"), ADD);
 		binaryOp(prec("-").sameAs("+"), SUB);
@@ -141,6 +133,13 @@ class BlocksParser extends Parser<Expression> {
 		// postfix.set(".", dot(prec(".").moreThan("^")[1]));
 		// postfix.set("::", doubleSemi(prec("::").sameAs(".")[1]));
 
+		addMacro("<IDENT>", Identifier.PARSER);
+		addMacro("<NUMBER>", Literal.PARSER);
+		addMacro("<STRING>", Literal.PARSER);
+		addMacro("<BLOCK_PAREN>", Paren.PARSER);
+		addMacro("<BLOCK_BRACKET>", ArrayAtom.PARSER);
+		addMacro("<BLOCK_BRACE>", Object.PARSER);
+
 		addMacro("true", new ConstLiteral(BBoolean.TRUE));
 		addMacro("false", new ConstLiteral(BBoolean.FALSE));
 
@@ -151,17 +150,17 @@ class BlocksParser extends Parser<Expression> {
 
 		// addMacro("while", WHILE);
 		// addMacro("for", FOR);
-		addMacro("break", BREAK);
-		addMacro("continue", CONTINUE);
+		addMacro("break", Break.PARSER);
+		addMacro("continue", Continue.PARSER);
 
 		// addMacro("fun", FUN);
-		addMacro("return", RETURN);
+		addMacro("return", Return.PARSER);
 
 		// addMacro("gen", GEN);
-		addMacro("yield", YIELD);
+		addMacro("yield", Yield.PARSER);
 
 		// addMacro("async", ASYNC);
-		addMacro("await", AWAIT);
+		addMacro("await", Await.PARSER);
 
 		// addMacro("export", EXPORT);
 		// addMacro("import", IMPORT);

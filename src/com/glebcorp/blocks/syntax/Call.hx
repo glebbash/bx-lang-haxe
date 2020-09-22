@@ -2,13 +2,12 @@ package com.glebcorp.blocks.syntax;
 
 import com.glebcorp.blocks.Lexer;
 import com.glebcorp.blocks.syntax.ArrayAtom;
-import com.glebcorp.blocks.syntax.ArrayAtom.ARRAY;
 import com.glebcorp.blocks.engine.Prelude;
 import com.glebcorp.blocks.Core;
 
 class Call extends PrecAction {
 	override function parse(parser: ExprParser, token: Token, expr: Expression): CallExpr {
-		return new CallExpr(expr, ARRAY.parse(parser, token));
+		return new CallExpr(expr, ArrayAtom.PARSER.parse(parser, token));
 	}
 }
 

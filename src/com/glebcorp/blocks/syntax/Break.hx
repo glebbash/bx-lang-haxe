@@ -7,7 +7,7 @@ import com.glebcorp.blocks.Core;
 using com.glebcorp.blocks.utils.NullUtils;
 
 class Break implements Atom {
-	static final BREAK = new Break();
+	static final PARSER = new Break();
 
 	function new() {}
 

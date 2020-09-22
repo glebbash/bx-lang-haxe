@@ -22,7 +22,7 @@ using com.glebcorp.blocks.utils.NullUtils;
 }
 
 class Object implements Atom {
-	static final OBJECT = new Object();
+	static final PARSER = new Object();
 
 	function new() {}
 

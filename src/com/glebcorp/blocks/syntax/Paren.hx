@@ -5,7 +5,7 @@ import com.glebcorp.blocks.Core;
 import com.glebcorp.blocks.utils.SyntaxError.syntaxError;
 
 class Paren implements Atom {
-    static final PAREN = new Paren();
+    static final PARSER = new Paren();
 
     function new() {}
 

@@ -9,16 +9,16 @@ import com.glebcorp.blocks.Lexer;
 import com.glebcorp.blocks.Core;
 
 class Identifier implements Atom {
-	static final IDENT = new Identifier();
+	static final PARSER = new Identifier();
 
 	static function expect(parser: ExprParser, includeSpecial = false) {
 		if (includeSpecial) {
-			return IDENT.parse(parser, parser.expect({type: TokenType.Identifier}));
+			return PARSER.parse(parser, parser.expect({type: TokenType.Identifier}));
 		}
-		return IDENT.parse(parser, parser.expect({complexType: "<IDENT>"}));
+		return PARSER.parse(parser, parser.expect({complexType: "<IDENT>"}));
 	}
 
-	function new() {}
+	private function new() {}
 
 	function parse(parser: ExprParser, token: Token): IdentExpr {
 		return switch (token.value) {

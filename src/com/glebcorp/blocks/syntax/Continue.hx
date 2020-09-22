@@ -7,7 +7,7 @@ import com.glebcorp.blocks.Core;
 using com.glebcorp.blocks.utils.NullUtils;
 
 class Continue implements Atom {
-	static final CONTINUE = new Continue();
+	static final PARSER = new Continue();
 
 	function new() {}
 

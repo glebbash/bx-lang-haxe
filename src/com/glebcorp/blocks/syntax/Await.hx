@@ -5,9 +5,9 @@ import com.glebcorp.blocks.Lexer;
 import com.glebcorp.blocks.engine.Prelude;
 
 class Await implements Atom {
-    static final AWAIT = new Yield();
+    static final PARSER = new Yield();
 
-    function new() {}
+    private function new() {}
 
     function parse(parser: ExprParser, token: Token): AwaitExpr {
         return new AwaitExpr(parser.parseToEnd());

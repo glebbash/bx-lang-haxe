@@ -12,9 +12,9 @@ import com.glebcorp.blocks.utils.Panic.panic;
 using com.glebcorp.blocks.utils.ArrayUtils;
 
 class ArrayAtom implements Atom {
-	static final ARRAY = new ArrayAtom();
+	static final PARSER = new ArrayAtom();
 
-	function new() {}
+	private function new() {}
 
 	function parse(parser: ExprParser, token: Token): ArrayExpr {
 		return switch (token.value) {

@@ -5,7 +5,7 @@ import com.glebcorp.blocks.Lexer;
 import com.glebcorp.blocks.engine.Prelude;
 
 class Yield implements Atom {
-    static final YIELD = new Yield();
+    static final PARSER = new Yield();
 
     function new() {}
 

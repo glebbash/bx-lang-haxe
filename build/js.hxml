@@ -1,4 +1,4 @@
-run/config.hxml
+build/common.hxml
 --main Main
 --library hxtsdgen
 --define js-es=6

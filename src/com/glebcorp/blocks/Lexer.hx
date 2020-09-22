@@ -28,7 +28,6 @@ enum TokenValue {
 }
 
 @:expose("Position")
-@:publicFields
 @:tink class Position {
 	final line: Int = _;
 	final column: Int = _;
@@ -39,7 +38,6 @@ enum TokenValue {
 }
 
 @:expose("Token")
-@:publicFields
 @:tink class Token {
 	final type: TokenType = _;
 	final value: TokenValue = _;
@@ -52,14 +50,12 @@ enum TokenValue {
 }
 
 @:expose("BracketInfo")
-@:publicFields
 @:tink class BracketInfo {
 	final end: String = _;
 	final type: TokenType = _;
 }
 
 @:expose("LexerConfig")
-@:publicFields
 @:structInit
 class LexerConfig {
 	final singleLineCommentStart: Null<String> = null;
@@ -88,7 +84,7 @@ class LexerConfig {
 	private var offset: Int = -1;
 	private var char: CharOrEOF = EOF;
 
-	public function tokenize(source: String): Array<Tokens> {
+	function tokenize(source: String): Array<Tokens> {
 		reset(source);
 		final exprs: Array<Tokens> = [];
 		while (true) {
@@ -105,7 +101,7 @@ class LexerConfig {
 		return exprs;
 	}
 
-	function reset(src: String) {
+	private function reset(src: String) {
 		source = src;
 		prevRow = 1;
 		prevCol = 0;
@@ -116,7 +112,7 @@ class LexerConfig {
 		next(); // read first
 	}
 
-	function exprIndented(end: CharOrEOF): Tokens {
+	private function exprIndented(end: CharOrEOF): Tokens {
 		final startRow = row;
 		final startCol = col;
 		final expr: Tokens = [];
@@ -151,7 +147,7 @@ class LexerConfig {
 		return expr;
 	}
 
-	function atom(): Token {
+	private function atom(): Token {
 		if (EOF == char || ")" == char || "]" == char || "}" == char) {
 			return panicUnexpected();
 		}
@@ -171,7 +167,7 @@ class LexerConfig {
 		return token(TokenType.Operator, () -> TokenValue.Text(sequence(config.operatorRegex)));
 	}
 
-	function exprBracketed(info: BracketInfo): Token {
+	private function exprBracketed(info: BracketInfo): Token {
 		return token(info.type, () -> {
 			final exprs: Array<Tokens> = [];
 			next(); // skip opening bracket
@@ -192,7 +188,7 @@ class LexerConfig {
 		});
 	}
 
-	function sequence(regex: EReg): String {
+	private function sequence(regex: EReg): String {
 		var buff = char.unsafe();
 		while (true) {
 			next();
@@ -205,7 +201,7 @@ class LexerConfig {
 		return buff;
 	}
 
-	function string(ending: String): String {
+	private function string(ending: String): String {
 		final multiEnding = ending + ending + ending;
 		if (skipSequence(multiEnding + "\n")) {
 			return multilineString(multiEnding);
@@ -232,7 +228,7 @@ class LexerConfig {
 		}
 	}
 
-	function multilineString(ending: String): String {
+	private function multilineString(ending: String): String {
 		var buff = ending.charAt(0) + char;
 		while (true) {
 			if (skipSequence(ending)) {
@@ -242,12 +238,12 @@ class LexerConfig {
 		}
 	}
 
-	function token(type: TokenType, fun: () -> TokenValue, realStart: Null<Position> = null): Token {
+	private function token(type: TokenType, fun: () -> TokenValue, realStart: Null<Position> = null): Token {
 		final start = realStart != null ? realStart : pos();
 		return new Token(type, fun(), start, new Position(prevRow, prevCol));
 	}
 
-	function skipWhitespace(comments: Tokens) {
+	private function skipWhitespace(comments: Tokens) {
 		while (true) {
 			final start: Position = pos();
 			if (config.singleLineCommentStart != null && skipSequence(config.singleLineCommentStart)) {
@@ -271,7 +267,7 @@ class LexerConfig {
 		}
 	}
 
-	function skipSequence(string: String): Bool {
+	private function skipSequence(string: String): Bool {
 		if (string.length == 1) {
 			if (char == string) {
 				next();
@@ -289,7 +285,7 @@ class LexerConfig {
 		return false;
 	}
 
-	function skipMultilineComment(): String {
+	private function skipMultilineComment(): String {
 		var buff = "";
 		var opened = 1;
 		while (true) {
@@ -312,11 +308,11 @@ class LexerConfig {
 		return buff;
 	}
 
-	function isWhitespace(char: String): Bool {
+	private function isWhitespace(char: String): Bool {
 		return config.whitespaceRegex.match(char);
 	}
 
-	function next(): CharOrEOF {
+	private function next(): CharOrEOF {
 		if (offset == source.length - 1) {
 			prevRow = row;
 			prevCol = col;
@@ -336,16 +332,16 @@ class LexerConfig {
 		return char;
 	}
 
-	function nextExceptEOF(): String {
+	private function nextExceptEOF(): String {
 		final c = next();
 		return c == EOF ? panicUnexpected() : c.unsafe();
 	}
 
-	function panicUnexpected(): Any {
+	private function panicUnexpected(): Any {
 		return syntaxError(char == EOF ? "Unexpected EOF" : 'Unexpected char \'$char\'', pos());
 	}
 
-	function escapeChar(char: String): String {
+	private function escapeChar(char: String): String {
 		return switch (char) {
 			case '"', "'": char;
 			case "n": "\n";
@@ -354,11 +350,11 @@ class LexerConfig {
 		}
 	}
 
-	function pos(): Position {
+	private inline function pos(): Position {
 		return new Position(row, col);
 	}
 
-	function processML(string: String): String {
+	private function processML(string: String): String {
 		final lines = string.split("\n");
 		final lastLine = lines.pop();
 		if (lastLine == null) {

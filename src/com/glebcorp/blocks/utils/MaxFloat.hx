@@ -1,7 +1,7 @@
 package com.glebcorp.blocks.utils;
 
 extern class MaxFloat {
-	public static inline function maxFloat(): Float {
+	static inline function maxFloat(): Float {
 		#if flash
 		return untyped __global__['Number'].MAX_VALUE;
 		#elseif js

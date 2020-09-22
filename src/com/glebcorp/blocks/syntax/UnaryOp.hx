@@ -6,7 +6,6 @@ import com.glebcorp.blocks.Core;
 
 typedef UnaryFun = (x: BValue) -> BValue;
 
-@:publicFields
 @:tink class UnaryOp implements Atom {
 	final symbol: String = _;
 	final fun: UnaryFun = _;
@@ -15,7 +14,6 @@ typedef UnaryFun = (x: BValue) -> BValue;
 		return new UnaryOpExpr(symbol, parser.parse(), fun);
 }
 
-@:publicFields
 @:tink class UnaryOpExpr implements Expression {
 	final symbol: String = _;
 	final expr: Expression = _;

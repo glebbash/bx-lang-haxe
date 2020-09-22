@@ -2,7 +2,6 @@ package com.glebcorp.blocks.utils;
 
 import com.glebcorp.blocks.Lexer.Position;
 
-@:publicFields
 @:tink class SyntaxError {
 	final message: String = _;
 	final position: Position = _;

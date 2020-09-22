@@ -17,7 +17,6 @@ interface PostfixParser<E, T: E> {
 	function parse(parser: Parser<E>, token: Token, expr: E): T;
 }
 
-@:publicFields
 @:structInit
 class TokenCondition {
 	final type: Null<TokenType> = null;
@@ -25,7 +24,6 @@ class TokenCondition {
 	final complexType: Null<String> = null;
 }
 
-@:publicFields
 class Parser<E> {
 	private static final START_TOKEN = new Token(TokenType.Comment, TokenValue.Text(""), new Position(1, 1), new Position(1, 1));
 	private static final EMPTY_STREAM: Stream<Token> = stream([]);

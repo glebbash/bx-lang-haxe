@@ -7,7 +7,7 @@ using Type;
 using com.glebcorp.blocks.utils.NullUtils;
 
 class ClassName {
-	public static function getName<T: BValue>(c: Class<T>): String {
+	static function getName<T: BValue>(c: Class<T>): String {
 		return c.getClassName().split(".").last().unwrap().substr(1);
 	}
 }

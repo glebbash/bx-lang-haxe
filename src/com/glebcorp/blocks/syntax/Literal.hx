@@ -11,7 +11,6 @@ import com.glebcorp.blocks.engine.Prelude;
 using com.glebcorp.blocks.utils.NullUtils;
 using com.glebcorp.blocks.utils.Slice;
 
-@:publicFields
 class Literal implements Atom {
 	static final LITERAL = new Literal();
 
@@ -30,7 +29,6 @@ class Literal implements Atom {
 	}
 }
 
-@:publicFields
 @:tink class ConstLiteral implements Atom {
 	final value: BValue = _;
 
@@ -39,7 +37,6 @@ class Literal implements Atom {
 	}
 }
 
-@:publicFields
 @:tink class LiteralExpr implements Expression {
 	final value: BValue = _;
 

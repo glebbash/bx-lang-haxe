@@ -17,7 +17,6 @@ import com.glebcorp.blocks.utils.Panic.panic;
 using com.glebcorp.blocks.utils.ArrayUtils;
 using com.glebcorp.blocks.utils.NullUtils;
 
-@:publicFields
 class Blocks {
 	static final LEXER_CONFIG: LexerConfig = {
 		singleLineCommentStart: "//",

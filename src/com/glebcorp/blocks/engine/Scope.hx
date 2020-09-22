@@ -5,13 +5,11 @@ import com.glebcorp.blocks.utils.Panic.panic;
 
 typedef Set<T> = Map<T, Bool>;
 
-@:publicFields
 @:tink class Cell {
 	var value: BValue = _;
 	final constant: Bool = _;
 }
 
-@:publicFields
 @:tink class Scope {
 	private final data = new Map<String, Cell>();
 

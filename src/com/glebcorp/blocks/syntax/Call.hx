@@ -7,12 +7,11 @@ import com.glebcorp.blocks.engine.Prelude;
 import com.glebcorp.blocks.Core;
 
 class Call extends PrecAction {
-	override public function parse(parser: ExprParser, token: Token, expr: Expression): CallExpr {
+	override function parse(parser: ExprParser, token: Token, expr: Expression): CallExpr {
 		return new CallExpr(expr, ARRAY.parse(parser, token));
 	}
 }
 
-@:publicFields
 @:tink class CallExpr implements Expression {
 	final fun: Expression = _;
 	final args: ArrayExpr = _;

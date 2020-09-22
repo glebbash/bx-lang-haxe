@@ -16,7 +16,6 @@ interface AssignableExpr extends Expression {
 	function assign(ctx: Context, value: BValue): Void;
 }
 
-@:publicFields
 class Assign extends PrecAction {
 	override
 	function parse(parser: ExprParser, token: Token, assignable: Expression): AssignExpr {
@@ -29,7 +28,6 @@ class Assign extends PrecAction {
 	}
 }
 
-@:publicFields
 @:tink class AssignExpr implements Expression {
 	final assignable: AssignableExpr = _;
 	final value: Expression = _;

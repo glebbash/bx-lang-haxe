@@ -4,7 +4,6 @@ import com.glebcorp.blocks.Core;
 import com.glebcorp.blocks.Lexer;
 import com.glebcorp.blocks.engine.Prelude;
 
-@:publicFields
 class Await implements Atom {
     static final AWAIT = new Yield();
 
@@ -15,7 +14,6 @@ class Await implements Atom {
     }
 }
 
-@:publicFields
 @:tink class AwaitExpr implements Expression {
     final value: Expression = _;
 

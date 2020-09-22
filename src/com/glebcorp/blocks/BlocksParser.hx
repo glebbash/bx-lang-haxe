@@ -27,7 +27,6 @@ using com.glebcorp.blocks.utils.NullUtils;
 using com.glebcorp.blocks.BlocksParser.BValueUtils;
 using com.glebcorp.blocks.BlocksParser.ExpectNo;
 
-@:publicFields
 extern class BValueUtils {
 	static inline function num(val: BValue): Float {
 		return val.as(BNumber).data;
@@ -46,7 +45,6 @@ extern class ExpectNo {
 	}
 }
 
-@:publicFields
 class BlocksParser extends Parser<Expression> {
 	static extern inline function num(val: Float): BNumber {
 		return new BNumber(val);

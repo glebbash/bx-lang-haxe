@@ -2,7 +2,6 @@ package com.glebcorp.blocks.utils;
 
 import com.glebcorp.blocks.utils.Panic.panic;
 
-@:publicFields
 extern class NullUtils {
 	static inline function unwrap<T>(value: Null<T>): T {
 		return value == null ? panic("Attempt to unwrap null") : (value: T);

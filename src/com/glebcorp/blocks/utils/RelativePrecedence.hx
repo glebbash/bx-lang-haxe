@@ -4,20 +4,18 @@ import com.glebcorp.blocks.utils.MaxFloat.maxFloat;
 
 using com.glebcorp.blocks.utils.NullUtils;
 
-@:publicFields
 @:tink class NamedPrec {
 	final name: String = _;
 	final prec: Float = _;
 }
 
 extern class RelativePrecedence {
-	public static inline function precedence(): String->PrecGen {
+	static inline function precedence(): String->PrecGen {
 		final data: Map<String, Float> = ["MIN" => 0, "MAX" => maxFloat()];
 		return (name: String) -> new PrecGen(name, data);
 	}
 }
 
-@:publicFields
 @:tink class PrecGen {
 	final name: String = _;
 	final data: Map<String, Float> = _;

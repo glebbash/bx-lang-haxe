@@ -6,7 +6,6 @@ import com.glebcorp.blocks.Core;
 
 using com.glebcorp.blocks.utils.NullUtils;
 
-@:publicFields
 class Continue implements Atom {
 	static final CONTINUE = new Continue();
 
@@ -30,7 +29,6 @@ class Continue implements Atom {
 	}
 }
 
-@:publicFields
 @:tink class ContinueExpr implements Expression {
 	final times: Int = _;
 

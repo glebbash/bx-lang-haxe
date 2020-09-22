@@ -4,7 +4,6 @@ import com.glebcorp.blocks.Lexer;
 import com.glebcorp.blocks.Core;
 import com.glebcorp.blocks.utils.SyntaxError.syntaxError;
 
-@:publicFields
 class Paren implements Atom {
     static final PAREN = new Paren();
 
@@ -30,7 +29,6 @@ class Paren implements Atom {
     }
 }
 
-@:publicFields
 @:tink class ParenExpr implements Expression {
     final expr: Expression = _;
 

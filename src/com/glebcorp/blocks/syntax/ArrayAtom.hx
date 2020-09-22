@@ -11,7 +11,6 @@ import com.glebcorp.blocks.utils.Panic.panic;
 
 using com.glebcorp.blocks.utils.ArrayUtils;
 
-@:publicFields
 class ArrayAtom implements Atom {
 	static final ARRAY = new ArrayAtom();
 
@@ -36,7 +35,6 @@ class ArrayAtom implements Atom {
 	}
 }
 
-@:publicFields
 @:tink class ArrayExpr implements AssignableExpr {
 	final items: Array<Expression> = _;
 

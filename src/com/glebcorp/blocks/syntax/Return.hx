@@ -4,7 +4,6 @@ import com.glebcorp.blocks.Core;
 import com.glebcorp.blocks.Lexer;
 import com.glebcorp.blocks.engine.Prelude;
 
-@:publicFields
 class Return implements Atom {
     static final RETURN = new Yield();
 
@@ -15,7 +14,6 @@ class Return implements Atom {
     }
 }
 
-@:publicFields
 @:tink class ReturnExpr implements Expression {
     final value: Expression = _;
 

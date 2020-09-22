@@ -1,7 +1,7 @@
 package com.glebcorp.blocks.utils;
 
 extern class Println {
-    public static inline function println(val: Any): Void {
+    static inline function println(val: Any): Void {
         #if(sys)
         Sys.println(val);
         #elseif(js)

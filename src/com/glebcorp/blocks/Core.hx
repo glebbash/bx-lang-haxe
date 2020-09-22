@@ -9,7 +9,6 @@ typedef ExprParser = Parser<Expression>;
 typedef Atom = PrefixParser<Expression, Expression>;
 typedef Action = PostfixParser<Expression, Expression>;
 
-@:publicFields
 @:tink class Context {
 	final scope: Scope = _;
 	final core: Blocks = _;
@@ -22,12 +21,11 @@ interface Expression {
 }
 
 extern class Core {
-	public static inline function subContext(ctx: Context): Context {
+	static inline function subContext(ctx: Context): Context {
 		return new Context(new Scope(ctx.scope), ctx.core);
 	}
 }
 
-@:publicFields
 @:tink class PrecAction implements PostfixParser<Expression, Expression> {
 	final prec: Float = _;
 

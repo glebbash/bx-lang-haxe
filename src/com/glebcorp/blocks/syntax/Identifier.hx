@@ -1,15 +1,13 @@
 package com.glebcorp.blocks.syntax;
 
-import com.glebcorp.blocks.Lexer.TokenType;
 import com.glebcorp.blocks.syntax.Assign;
+import com.glebcorp.blocks.syntax.Export;
 import com.glebcorp.blocks.engine.Engine;
 import com.glebcorp.blocks.utils.Panic.panic;
-import com.glebcorp.blocks.engine.Scope.Set;
-import com.glebcorp.blocks.Lexer.Token;
-import com.glebcorp.blocks.Lexer.TokenValue;
+import com.glebcorp.blocks.engine.Scope;
+import com.glebcorp.blocks.Lexer;
 import com.glebcorp.blocks.Core;
 
-@:publicFields
 class Identifier implements Atom {
 	static final IDENT = new Identifier();
 
@@ -30,7 +28,6 @@ class Identifier implements Atom {
 	}
 }
 
-@:publicFields
 @:tink class IdentExpr implements AssignableExpr implements Exportable {
 	final name: String = _;
 

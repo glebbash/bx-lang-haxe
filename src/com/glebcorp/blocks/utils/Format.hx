@@ -6,7 +6,6 @@ import com.glebcorp.blocks.engine.Prelude;
 using StringTools;
 using Lambda;
 
-@:publicFields
 class Format {
     static function format(template: String, args: BArray): String {
         final f = (val: BValue, tmp: String) -> tmp.replace("{}", Std.string(val));

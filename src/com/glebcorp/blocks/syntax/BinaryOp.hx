@@ -6,7 +6,6 @@ import com.glebcorp.blocks.Core;
 
 typedef BinaryFun = (a: BValue, b: BValue) -> BValue;
 
-@:publicFields
 @:tink class BinaryOp implements Action {
 	final symbol: String = _;
 	final prec: Float = _;
@@ -25,7 +24,6 @@ typedef BinaryFun = (a: BValue, b: BValue) -> BValue;
 	}
 }
 
-@:publicFields
 @:tink class BinaryOpExpr implements Expression {
 	final symbol: String = _;
 	final lhs: Expression = _;

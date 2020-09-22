@@ -7,7 +7,6 @@ using com.glebcorp.blocks.utils.ClassName;
 using com.glebcorp.blocks.utils.NullUtils;
 using com.glebcorp.blocks.utils.ArrayUtils;
 
-@:publicFields
 class Engine {
 	final types: Map<String, BType> = [];
 
@@ -28,7 +27,6 @@ class Engine {
 	}
 }
 
-@:publicFields
 @:tink class BType {
 	private final engine: Engine = _;
 	final name: String = _;
@@ -63,7 +61,6 @@ class Engine {
 	}
 }
 
-@:publicFields
 class BValue {
 	final type: String;
 
@@ -96,7 +93,6 @@ class BValue {
 	}
 }
 
-@:publicFields
 @:tink class BWrapper<T> extends BValue {
 	final data: T = _;
 

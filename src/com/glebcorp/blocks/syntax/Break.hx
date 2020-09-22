@@ -6,7 +6,6 @@ import com.glebcorp.blocks.Core;
 
 using com.glebcorp.blocks.utils.NullUtils;
 
-@:publicFields
 class Break implements Atom {
 	static final BREAK = new Break();
 
@@ -30,7 +29,6 @@ class Break implements Atom {
 	}
 }
 
-@:publicFields
 @:tink class BreakExpr implements Expression {
 	final times: Int = _;
 

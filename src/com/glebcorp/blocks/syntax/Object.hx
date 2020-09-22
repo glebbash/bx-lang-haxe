@@ -12,7 +12,6 @@ using Std;
 using com.glebcorp.blocks.utils.ArrayUtils;
 using com.glebcorp.blocks.utils.NullUtils;
 
-@:publicFields
 @:tink class KVPair {
 	final name: String = _;
 	final value: Null<Expression> = _;
@@ -22,7 +21,6 @@ using com.glebcorp.blocks.utils.NullUtils;
 	}
 }
 
-@:publicFields
 class Object implements Atom {
 	static final OBJECT = new Object();
 
@@ -55,7 +53,6 @@ class Object implements Atom {
 	}
 }
 
-@:publicFields
 @:tink class ObjectExpr implements AssignableExpr {
 	final pairs: Array<KVPair> = _;
 

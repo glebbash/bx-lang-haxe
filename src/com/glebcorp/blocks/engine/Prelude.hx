@@ -21,8 +21,8 @@ interface BIterator<T> {
 //////////////////////////////////
 
 class BBoolean extends BWrapper<Bool> {
-	public static final TRUE = new BBoolean(true);
-	public static final FALSE = new BBoolean(false);
+	static final TRUE = new BBoolean(true);
+	static final FALSE = new BBoolean(false);
 }
 
 //////////////////////////////////
@@ -32,12 +32,11 @@ class BNumber extends BWrapper<Float> {}
 //////////////////////////////////
 
 class BString extends BWrapper<String> implements BIterable<BString> {
-	public function iterator() {
+	function iterator() {
 		return new BStringIterator(data);
 	}
 }
 
-@:publicFields
 @:tink class BStringIterator implements BIterator<BString> {
 	var index = 0;
 	final str: String = _;
@@ -54,21 +53,20 @@ class BString extends BWrapper<String> implements BIterable<BString> {
 //////////////////////////////////
 
 class BArray extends BWrapper<Array<BValue>> implements BIterable<BValue> {
-	public function iterator() {
+	function iterator() {
 		return data.iterator();
 	}
 
-	override public function toString() {
+	override function toString() {
 		return '[${data.join(", ")}]';
 	}
 }
 
 //////////////////////////////////
 
-@:publicFields
 class BObject extends BValue {
 	private final data: Map<String, BValue> = [];
-	private final keys: Array<String> = [];
+	private final _keys: Array<String> = [];
 
 	function new() {
 		super();
@@ -80,14 +78,18 @@ class BObject extends BValue {
 
 	function set(prop: String, val: BValue) {
 		if (!data.exists(prop)) {
-			keys.push(prop);
+			_keys.push(prop);
 		}
 		data[prop] = val;
 		return this;
 	}
 
+	function keys() {
+		return _keys;
+	}
+
 	function keyValueIterator(): KeyValueIterator<String, BValue> {
-		return new KVIterator(data, keys);
+		return new KVIterator(data, _keys);
 	}
 
 	function iterator() {
@@ -99,7 +101,6 @@ class BObject extends BValue {
 	}
 }
 
-@:publicFields
 @:tink class KVIterator<T> {
 	final data: Map<String, T> = _;
 	final keys: Array<String> = _;
@@ -115,7 +116,6 @@ class BObject extends BValue {
 	}
 }
 
-@:publicFields
 @:tink class BObjectIterator implements BIterator<BArray> {
 	final kvIterator: KeyValueIterator<String, BValue> = _;
 
@@ -131,21 +131,19 @@ class BObject extends BValue {
 
 //////////////////////////////////
 
-@:publicFields
 @:tink class BRange extends BValue implements BIterable<BNumber> {
 	final start: Int = _;
 	final stop: Int = _;
 
-	public function iterator() {
+	function iterator() {
 		return new BRangeIterator(start, stop);
 	}
 
-	override public function toString() {
+	override function toString() {
 		return '$start..$stop';
 	}
 }
 
-@:publicFields
 @:tink class BRangeIterator extends BValue implements BIterator<BNumber> {
 	final start: Int = _;
 	final stop: Int = _;
@@ -164,7 +162,6 @@ class BObject extends BValue {
 
 typedef BFunctionBody = (args: Array<BValue>) -> BValue;
 
-@:publicFields
 class BFunction extends BWrapper<BFunctionBody> {
 	static inline function f1(fun: BValue->BValue): BFunction {
 		return new BFunction(args -> switch args {
@@ -204,7 +201,6 @@ class BReturn extends BWrapper<BValue> {}
 
 //////////////////////////////////
 
-@:publicFields
 class BVoid extends BValue {
 	static final VOID = new BVoid();
 
@@ -219,7 +215,6 @@ interface ExecState {
 	function resume(?value: BValue): BValue;
 }
 
-@:publicFields
 @:tink class PausedExec {
 	final execStack: Array<ExecState> = _;
 	var returned: BValue = _;
@@ -227,14 +222,13 @@ interface ExecState {
 }
 
 class BPausedExec extends BWrapper<PausedExec> {
-	override public function toString() {
+	override function toString() {
 		return 'pausedExec(${data.returned})';
 	}
 }
 
 //////////////////////////////////
 
-@:publicFields
 @:tink class BGenerator extends BValue implements BIterable<BValue> implements BIterator<BValue> {
 	var pausedExec = new PausedExec([], BVoid.VOID, false);
 	var ended = false;
@@ -305,7 +299,6 @@ class BPausedExec extends BWrapper<PausedExec> {
 	}
 }
 
-@:publicFields
 @:tink class BAsyncFunction extends BValue {
 	var pausedExec = new PausedExec([], BVoid.VOID, true);
 	var ended = false;

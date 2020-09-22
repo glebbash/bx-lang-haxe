@@ -6,7 +6,6 @@ import com.glebcorp.blocks.Core;
 import com.glebcorp.blocks.syntax.BinaryOp;
 import com.glebcorp.blocks.Core.Expression;
 
-@:publicFields
 @:tink class DoAndAssign implements Action {
 	final prec: Float = _;
 	final fun: BinaryFun = _;
@@ -23,7 +22,6 @@ import com.glebcorp.blocks.Core.Expression;
 	}
 }
 
-@:publicFields
 @:tink class DoAndAssignExpr implements Expression {
 	final assignable: AssignableExpr = _;
 	final value: Expression = _;

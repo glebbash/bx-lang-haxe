@@ -1,0 +1,4 @@
+--class-path src
+--macro nullSafety("com.glebcorp.blocks", Strict)
+--macro addGlobalMetadata("com.glebcorp.blocks", "@:publicFields")
+--library tink_lang

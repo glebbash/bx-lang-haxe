@@ -1,0 +1,5 @@
+run/config.hxml
+--main Main
+--library hxtsdgen
+--define js-es=6
+--js bin/js/main.js

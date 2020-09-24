@@ -10,8 +10,11 @@ import com.glebcorp.blocks.syntax.BinaryOp;
 import com.glebcorp.blocks.syntax.Break;
 import com.glebcorp.blocks.syntax.Call;
 import com.glebcorp.blocks.syntax.Continue;
+import com.glebcorp.blocks.syntax.Define;
 import com.glebcorp.blocks.syntax.DoAndAssign;
+import com.glebcorp.blocks.syntax.Export;
 import com.glebcorp.blocks.syntax.Identifier;
+import com.glebcorp.blocks.syntax.Is;
 import com.glebcorp.blocks.syntax.Literal;
 import com.glebcorp.blocks.syntax.Object;
 import com.glebcorp.blocks.syntax.Paren;
@@ -124,45 +127,49 @@ class BlocksParser extends Parser<Expression> {
 		unaryOp("+", x -> x.as(BNumber));
 		unaryOp("!", x -> bool(!x.bool()));
 
-		postfix["<BLOCK_PAREN>"] = new Call(prec("<CALL>").moreThan("^").prec);
+		final ARRAY = new ArrayAtom();
+		final IDENTIFIER = new Identifier();
+		final LITERAL = new Literal();
+
+		postfix["<BLOCK_PAREN>"] = new Call(prec("<CALL>").moreThan("^").prec, ARRAY);
 		// postfix.set("<BLOCK_BRACKET>", element(prec("<ELEM>").sameAs("<CALL>")[1]));
 		// postfix.set("<BLOCK_INDENT>", INDENT);
 
-		// postfix.set("is", is(prec("is").sameAs("+")[1]));
+		postfix["is"] = new Is(prec("is").sameAs("+").prec, IDENTIFIER);
 
 		// postfix.set(".", dot(prec(".").moreThan("^")[1]));
 		// postfix.set("::", doubleSemi(prec("::").sameAs(".")[1]));
 
-		addMacro("<IDENT>", Identifier.PARSER);
-		addMacro("<NUMBER>", Literal.PARSER);
-		addMacro("<STRING>", Literal.PARSER);
-		addMacro("<BLOCK_PAREN>", Paren.PARSER);
-		addMacro("<BLOCK_BRACKET>", ArrayAtom.PARSER);
-		addMacro("<BLOCK_BRACE>", Object.PARSER);
+		addMacro("<IDENT>", IDENTIFIER);
+		addMacro("<NUMBER>", LITERAL);
+		addMacro("<STRING>", LITERAL);
+		addMacro("<BLOCK_PAREN>", new Paren());
+		addMacro("<BLOCK_BRACKET>", ARRAY);
+		addMacro("<BLOCK_BRACE>", new Object(IDENTIFIER));
 
 		addMacro("true", new ConstLiteral(BBoolean.TRUE));
 		addMacro("false", new ConstLiteral(BBoolean.FALSE));
 
-		// addMacro("let", define(false));
-		// addMacro("const", define(true));
+		addMacro("let", new Define(false));
+		addMacro("const", new Define(true));
 
 		// addMacro("if", IF);
 
 		// addMacro("while", WHILE);
 		// addMacro("for", FOR);
-		addMacro("break", Break.PARSER);
-		addMacro("continue", Continue.PARSER);
+		addMacro("break", new Break());
+		addMacro("continue", new Continue());
 
 		// addMacro("fun", FUN);
-		addMacro("return", Return.PARSER);
+		addMacro("return", new Return());
 
 		// addMacro("gen", GEN);
-		addMacro("yield", Yield.PARSER);
+		addMacro("yield", new Yield());
 
 		// addMacro("async", ASYNC);
-		addMacro("await", Await.PARSER);
+		addMacro("await", new Await());
 
-		// addMacro("export", EXPORT);
+		addMacro("export", new Export());
 		// addMacro("import", IMPORT);
 	}
 

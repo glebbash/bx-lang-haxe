@@ -7,8 +7,6 @@ import com.glebcorp.blocks.engine.Prelude;
 using com.glebcorp.blocks.utils.NullUtils;
 
 class Continue implements Atom {
-	static final PARSER = new Continue();
-
 	function new() {}
 
 	function parse(parser: ExprParser, token: Token): ContinueExpr {

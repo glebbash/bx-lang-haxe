@@ -21,10 +21,8 @@ using com.glebcorp.blocks.utils.NullUtils;
 	}
 }
 
-class Object implements Atom {
-	static final PARSER = new Object();
-
-	function new() {}
+@:tink class Object implements Atom {
+	final identifier: Identifier = _;
 
 	function parse(parser: ExprParser, token: Token): ObjectExpr {
 		return switch (token.value) {
@@ -33,7 +31,7 @@ class Object implements Atom {
 				for (expr in exprs) {
 					final subParser = parser.subParser(expr);
 					while (subParser.nextToken(false) != null) {
-						final name = Identifier.expect(subParser).name;
+						final name = identifier.expect(subParser).name;
 						final value: Null<Expression> = if (subParser.nextIs({value: ":"})) {
 							subParser.next();
 							subParser.parse();
@@ -96,13 +94,13 @@ class Object implements Atom {
 		}
 	}
 
-	function toString(symbol = "", indent = "") {
-		final bodyIndent = symbol + indent;
-		return indent + "{" + pairs.map(pair -> {
+	function toString(s = "", i = "") {
+		final bodyIndent = s + i;
+		return i + "{" + pairs.map(pair -> {
 			if (pair.value == null) {
 				return pair.name;
 			}
-			return pair.name + ": " + pair.value.unsafe().toString(symbol, bodyIndent);
-		}).join(",\n") + '\n$indent}';
+			return pair.name + ": " + pair.value.unsafe().toString(s, bodyIndent);
+		}).join(",\n") + '\n$i}';
 	}
 }

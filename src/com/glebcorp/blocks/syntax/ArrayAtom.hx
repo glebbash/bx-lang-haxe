@@ -12,9 +12,7 @@ import com.glebcorp.blocks.utils.Panic.panic;
 using com.glebcorp.blocks.utils.ArrayUtils;
 
 class ArrayAtom implements Atom {
-	static final PARSER = new ArrayAtom();
-
-	private function new() {}
+	function new() {}
 
 	function parse(parser: ExprParser, token: Token): ArrayExpr {
 		return switch (token.value) {
@@ -80,7 +78,7 @@ class ArrayAtom implements Atom {
 		return new BArray(items.map(item -> item.eval(ctx)));
 	}
 
-	function toString(symbol = "", indent = "") {
-		return indent + "[" + items.map(item -> item.toString(symbol, indent)).join(", ") + "]";
+	function toString(s = "", i = "") {
+		return i + "[" + items.map(item -> item.toString(s, i)).join(", ") + "]";
 	}
 }

@@ -9,16 +9,14 @@ import com.glebcorp.blocks.syntax.Export;
 import com.glebcorp.blocks.utils.Panic.panic;
 
 class Identifier implements Atom {
-	static final PARSER = new Identifier();
-
-	static function expect(parser: ExprParser, includeSpecial = false) {
+	function expect(parser: ExprParser, includeSpecial = false) {
 		if (includeSpecial) {
-			return PARSER.parse(parser, parser.expect({type: TokenType.Identifier}));
+			return parse(parser, parser.expect({type: TokenType.Identifier}));
 		}
-		return PARSER.parse(parser, parser.expect({complexType: "<IDENT>"}));
+		return parse(parser, parser.expect({complexType: "<IDENT>"}));
 	}
 
-	private function new() {}
+	function new() {}
 
 	function parse(parser: ExprParser, token: Token): IdentExpr {
 		return switch (token.value) {
@@ -28,7 +26,7 @@ class Identifier implements Atom {
 	}
 }
 
-@:tink class IdentExpr implements AssignableExpr implements Exportable {
+@:tink class IdentExpr implements AssignableExpr implements ExportableExpr {
 	final name: String = _;
 
 	function eval(ctx: Context) {

@@ -7,8 +7,6 @@ import com.glebcorp.blocks.engine.Prelude;
 using com.glebcorp.blocks.utils.NullUtils;
 
 class Break implements Atom {
-	static final PARSER = new Break();
-
 	function new() {}
 
 	function parse(parser: ExprParser, token: Token): BreakExpr {

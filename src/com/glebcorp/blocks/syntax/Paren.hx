@@ -5,8 +5,6 @@ import com.glebcorp.blocks.Lexer;
 import com.glebcorp.blocks.utils.SyntaxError.syntaxError;
 
 class Paren implements Atom {
-    static final PARSER = new Paren();
-
     function new() {}
 
 	static function parenExpr(parser: ExprParser, token: Token): Tokens {

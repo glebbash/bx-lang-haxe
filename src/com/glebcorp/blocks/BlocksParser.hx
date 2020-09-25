@@ -14,6 +14,7 @@ import com.glebcorp.blocks.syntax.Define;
 import com.glebcorp.blocks.syntax.DoAndAssign;
 import com.glebcorp.blocks.syntax.Export;
 import com.glebcorp.blocks.syntax.Identifier;
+import com.glebcorp.blocks.syntax.Import;
 import com.glebcorp.blocks.syntax.Indent;
 import com.glebcorp.blocks.syntax.Is;
 import com.glebcorp.blocks.syntax.Literal;
@@ -131,6 +132,7 @@ class BlocksParser extends Parser<Expression> {
 		final ARRAY = new ArrayAtom();
 		final IDENTIFIER = new Identifier();
 		final LITERAL = new Literal();
+		final OBJECT = new Object(IDENTIFIER);
 
 		postfix["<BLOCK_PAREN>"] = new Call(prec("<CALL>").moreThan("^").prec, ARRAY);
 		// postfix["<BLOCK_BRACKET>"] = new Element(prec("<ELEM>").sameAs("<CALL>").prec);
@@ -146,7 +148,7 @@ class BlocksParser extends Parser<Expression> {
 		addMacro("<STRING>", LITERAL);
 		addMacro("<BLOCK_PAREN>", new Paren());
 		addMacro("<BLOCK_BRACKET>", ARRAY);
-		addMacro("<BLOCK_BRACE>", new Object(IDENTIFIER));
+		addMacro("<BLOCK_BRACE>", OBJECT);
 
 		addMacro("true", new ConstLiteral(BBoolean.TRUE));
 		addMacro("false", new ConstLiteral(BBoolean.FALSE));
@@ -171,7 +173,7 @@ class BlocksParser extends Parser<Expression> {
 		addMacro("await", new Await());
 
 		addMacro("export", new Export());
-		// addMacro("import", IMPORT);
+		addMacro("import", new Import(OBJECT, IDENTIFIER));
 	}
 
 	function doAndAssign(np: NamedPrec, fun: BinaryFun) {

@@ -3,7 +3,7 @@ package com.glebcorp.blocks.syntax;
 import com.glebcorp.blocks.Core;
 import com.glebcorp.blocks.Lexer;
 import com.glebcorp.blocks.syntax.Identifier;
-import com.glebcorp.blocks.BlockParser.bool;
+import com.glebcorp.blocks.BlocksParser.bool;
 
 @:tink class Is extends PrecAction {
 	final ident: Identifier = _;

@@ -4,11 +4,12 @@ import com.glebcorp.blocks.Core;
 import com.glebcorp.blocks.Lexer;
 import com.glebcorp.blocks.engine.Engine;
 import com.glebcorp.blocks.engine.Prelude;
-import com.glebcorp.blocks.engine.Prelude.BVoid.VOID;
 
 using com.glebcorp.blocks.utils.NullUtils;
 
 class Block implements Atom {
+	function new() {}
+	
 	static function isBlock(token: Token) {
 		return switch (token.type) {
 			case BlockIndent, BlockBrace: true;
@@ -38,7 +39,7 @@ class Block implements Atom {
 	final body: Array<Expression> = _;
 
 	function eval(ctx: Context) {
-		return resume(ctx, 0, VOID);
+		return resume(ctx, 0, BVoid.VALUE);
 	}
 
 	function resume(ctx: Context, startLine: Int, res: BValue) {
@@ -67,6 +68,6 @@ class Block implements Atom {
 	final line: Int = _;
 
 	function resume(?value : BValue) {
-		return block.resume(ctx, line, value.or(VOID));
+		return block.resume(ctx, line, value.or(BVoid.VALUE));
 	}
 }

@@ -1,5 +1,6 @@
 package com.glebcorp.blocks;
 
+import com.glebcorp.blocks.syntax.If;
 import com.glebcorp.blocks.syntax.Element;
 import com.glebcorp.blocks.Core;
 import com.glebcorp.blocks.engine.Engine;
@@ -135,6 +136,7 @@ class BlocksParser extends Parser<Expression> {
 		final IDENTIFIER = new Identifier();
 		final LITERAL = new Literal();
 		final OBJECT = new Object(IDENTIFIER);
+		final BLOCK = new Block();
 
 		postfix["<BLOCK_PAREN>"] = new Call(prec("<CALL>").moreThan("^").prec, ARRAY);
 		postfix["<BLOCK_BRACKET>"] = new Element(prec("<ELEM>").sameAs("<CALL>").prec);
@@ -158,7 +160,7 @@ class BlocksParser extends Parser<Expression> {
 		addMacro("let", new Define(false));
 		addMacro("const", new Define(true));
 
-		// addMacro("if", IF);
+		addMacro("if", new If(BLOCK));
 
 		// addMacro("while", WHILE);
 		// addMacro("for", FOR);

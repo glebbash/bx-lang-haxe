@@ -27,10 +27,10 @@ using com.glebcorp.blocks.utils.NullUtils;
     final ifFalse: Null<Expression> = _;
 
     function eval(ctx: Context) {
-        if (this.cond.eval(ctx) == BBoolean.TRUE) {
-            return this.ifTrue.eval(Core.subContext(ctx));
-        } else if (this.ifFalse != null) {
-            return this.ifFalse.eval(Core.subContext(ctx));
+        if (cond.eval(ctx) == BBoolean.TRUE) {
+            return ifTrue.eval(Core.subContext(ctx));
+        } else if (ifFalse != null) {
+            return ifFalse.eval(Core.subContext(ctx));
         }
         return BVoid.VALUE;
     }

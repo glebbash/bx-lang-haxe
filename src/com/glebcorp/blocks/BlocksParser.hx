@@ -14,6 +14,7 @@ import com.glebcorp.blocks.syntax.Define;
 import com.glebcorp.blocks.syntax.DoAndAssign;
 import com.glebcorp.blocks.syntax.Export;
 import com.glebcorp.blocks.syntax.Identifier;
+import com.glebcorp.blocks.syntax.Indent;
 import com.glebcorp.blocks.syntax.Is;
 import com.glebcorp.blocks.syntax.Literal;
 import com.glebcorp.blocks.syntax.Object;
@@ -132,13 +133,13 @@ class BlocksParser extends Parser<Expression> {
 		final LITERAL = new Literal();
 
 		postfix["<BLOCK_PAREN>"] = new Call(prec("<CALL>").moreThan("^").prec, ARRAY);
-		// postfix.set("<BLOCK_BRACKET>", element(prec("<ELEM>").sameAs("<CALL>")[1]));
-		// postfix.set("<BLOCK_INDENT>", INDENT);
+		// postfix["<BLOCK_BRACKET>"] = new Element(prec("<ELEM>").sameAs("<CALL>").prec);
+		postfix["<BLOCK_INDENT>"] = new Indent();
 
 		postfix["is"] = new Is(prec("is").sameAs("+").prec, IDENTIFIER);
 
-		// postfix.set(".", dot(prec(".").moreThan("^")[1]));
-		// postfix.set("::", doubleSemi(prec("::").sameAs(".")[1]));
+		// postfix["."] = new Dot(prec(".").moreThan("^").prec);
+		// postfix["::"] = new DoubleSemi(prec("::").sameAs(".").prec);
 
 		addMacro("<IDENT>", IDENTIFIER);
 		addMacro("<NUMBER>", LITERAL);

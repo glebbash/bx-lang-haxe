@@ -17,6 +17,7 @@ import com.glebcorp.blocks.syntax.Call;
 import com.glebcorp.blocks.syntax.Continue;
 import com.glebcorp.blocks.syntax.Define;
 import com.glebcorp.blocks.syntax.DoAndAssign;
+import com.glebcorp.blocks.syntax.DoubleSemi;
 import com.glebcorp.blocks.syntax.Export;
 import com.glebcorp.blocks.syntax.Identifier;
 import com.glebcorp.blocks.syntax.Import;
@@ -147,7 +148,7 @@ class BlocksParser extends Parser<Expression> {
 		postfix["is"] = new Is(prec("is").sameAs("+").prec, IDENTIFIER);
 
 		postfix["."] = new Dot(prec(".").moreThan("^").prec, IDENTIFIER, ARRAY);
-		// postfix["::"] = new DoubleSemi(prec("::").sameAs(".").prec);
+		postfix["::"] = new DoubleSemi(prec("::").sameAs(".").prec, IDENTIFIER, ARRAY);
 
 		addMacro("<IDENT>", IDENTIFIER);
 		addMacro("<NUMBER>", LITERAL);

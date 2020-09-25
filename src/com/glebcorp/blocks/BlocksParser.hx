@@ -1,5 +1,7 @@
 package com.glebcorp.blocks;
 
+import com.glebcorp.blocks.syntax.Dot;
+import com.glebcorp.blocks.syntax.While;
 import com.glebcorp.blocks.syntax.If;
 import com.glebcorp.blocks.syntax.Element;
 import com.glebcorp.blocks.Core;
@@ -144,7 +146,7 @@ class BlocksParser extends Parser<Expression> {
 
 		postfix["is"] = new Is(prec("is").sameAs("+").prec, IDENTIFIER);
 
-		// postfix["."] = new Dot(prec(".").moreThan("^").prec);
+		postfix["."] = new Dot(prec(".").moreThan("^").prec, IDENTIFIER, ARRAY);
 		// postfix["::"] = new DoubleSemi(prec("::").sameAs(".").prec);
 
 		addMacro("<IDENT>", IDENTIFIER);
@@ -162,7 +164,7 @@ class BlocksParser extends Parser<Expression> {
 
 		addMacro("if", new If(BLOCK));
 
-		// addMacro("while", WHILE);
+		addMacro("while", new While(BLOCK));
 		// addMacro("for", FOR);
 		addMacro("break", new Break());
 		addMacro("continue", new Continue());

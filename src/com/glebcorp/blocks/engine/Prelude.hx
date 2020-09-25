@@ -195,9 +195,22 @@ class BFunction extends BWrapper<BFunctionBody> {
 
 //////////////////////////////////
 
-class BBreak extends BWrapper<Int> {}
-class BContinue extends BWrapper<Int> {}
-class BReturn extends BWrapper<BValue> {}
+@:tink class BWrapperMut<T> extends BValue {
+	var data: T = _;
+
+	@:nullSafety(Off)
+	override function equals(other: BValue) {
+		return data == other.as(Type.getClass(this)).data;
+	}
+
+	override function toString() {
+		return Std.string(data);
+	}
+}
+
+class BBreak extends BWrapperMut<Int> {}
+class BContinue extends BWrapperMut<Int> {}
+class BReturn extends BWrapperMut<BValue> {}
 
 //////////////////////////////////
 

@@ -1,5 +1,6 @@
 package com.glebcorp.blocks;
 
+import com.glebcorp.blocks.syntax.Element;
 import com.glebcorp.blocks.Core;
 import com.glebcorp.blocks.engine.Engine;
 import com.glebcorp.blocks.engine.Prelude;
@@ -7,6 +8,7 @@ import com.glebcorp.blocks.syntax.ArrayAtom;
 import com.glebcorp.blocks.syntax.Assign;
 import com.glebcorp.blocks.syntax.Await;
 import com.glebcorp.blocks.syntax.BinaryOp;
+import com.glebcorp.blocks.syntax.Block;
 import com.glebcorp.blocks.syntax.Break;
 import com.glebcorp.blocks.syntax.Call;
 import com.glebcorp.blocks.syntax.Continue;
@@ -135,7 +137,7 @@ class BlocksParser extends Parser<Expression> {
 		final OBJECT = new Object(IDENTIFIER);
 
 		postfix["<BLOCK_PAREN>"] = new Call(prec("<CALL>").moreThan("^").prec, ARRAY);
-		// postfix["<BLOCK_BRACKET>"] = new Element(prec("<ELEM>").sameAs("<CALL>").prec);
+		postfix["<BLOCK_BRACKET>"] = new Element(prec("<ELEM>").sameAs("<CALL>").prec);
 		postfix["<BLOCK_INDENT>"] = new Indent();
 
 		postfix["is"] = new Is(prec("is").sameAs("+").prec, IDENTIFIER);

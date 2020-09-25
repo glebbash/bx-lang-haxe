@@ -5,7 +5,6 @@ import com.glebcorp.blocks.engine.Engine;
 import com.glebcorp.blocks.syntax.Assign;
 import com.glebcorp.blocks.Core;
 import com.glebcorp.blocks.Lexer;
-import com.glebcorp.blocks.engine.Prelude.BVoid.VOID;
 import com.glebcorp.blocks.utils.Panic.panic;
 
 using Std;
@@ -38,7 +37,7 @@ using com.glebcorp.blocks.utils.NullUtils;
 			return value;
 		}
 		expr.assignable.define(ctx, value, constant);
-		return VOID;
+		return BVoid.VALUE;
 	}
 
 	function toString(s = "", i = "") {

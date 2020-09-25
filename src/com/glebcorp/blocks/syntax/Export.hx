@@ -3,7 +3,7 @@ package com.glebcorp.blocks.syntax;
 import com.glebcorp.blocks.engine.Scope;
 import com.glebcorp.blocks.Core;
 import com.glebcorp.blocks.Lexer;
-import com.glebcorp.blocks.engine.Prelude.BVoid.VOID;
+import com.glebcorp.blocks.engine.Prelude;
 import com.glebcorp.blocks.utils.Panic.panic;
 
 using Std;
@@ -35,7 +35,7 @@ class Export implements Atom {
 		}
 		expr.eval(ctx);
 		expr.export(ctx.scope.exports.unsafe());
-		return VOID;
+		return BVoid.VALUE;
 	}
 
 	function toString(s = "", i = "") {

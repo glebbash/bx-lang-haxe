@@ -202,7 +202,7 @@ class BReturn extends BWrapper<BValue> {}
 //////////////////////////////////
 
 class BVoid extends BValue {
-	static final VOID = new BVoid();
+	static final VALUE = new BVoid();
 
 	override function toString() {
 		return "void";
@@ -230,7 +230,7 @@ class BPausedExec extends BWrapper<PausedExec> {
 //////////////////////////////////
 
 @:tink class BGenerator extends BValue implements BIterable<BValue> implements BIterator<BValue> {
-	var pausedExec = new PausedExec([], BVoid.VOID, false);
+	var pausedExec = new PausedExec([], BVoid.VALUE, false);
 	var ended = false;
 	final ctx: Context = _;
 	final body: Expression = _;
@@ -300,7 +300,7 @@ class BPausedExec extends BWrapper<PausedExec> {
 }
 
 @:tink class BAsyncFunction extends BValue {
-	var pausedExec = new PausedExec([], BVoid.VOID, true);
+	var pausedExec = new PausedExec([], BVoid.VALUE, true);
 	var ended = false;
 	final ctx: Context = _;
 	final body: Expression = _;

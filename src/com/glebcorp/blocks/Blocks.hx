@@ -7,7 +7,6 @@ import com.glebcorp.blocks.engine.Engine;
 import com.glebcorp.blocks.engine.Prelude.BFunction.f1;
 import com.glebcorp.blocks.engine.Prelude.BFunction.f2;
 import com.glebcorp.blocks.engine.Prelude.BFunction.f3;
-import com.glebcorp.blocks.engine.Prelude.BVoid.VOID;
 import com.glebcorp.blocks.engine.Prelude;
 import com.glebcorp.blocks.engine.Scope;
 import com.glebcorp.blocks.utils.Panic.panic;
@@ -76,14 +75,14 @@ using com.glebcorp.blocks.utils.NullUtils;
 		}));
 		globalScope.define("print", f1(val -> {
 			println(val.toString());
-			return VOID;
+			return BVoid.VALUE;
 		}));
 		// globalScope.define("input", new BFunction((fun) -> {
 		// 	var cb = fun.as(BFunction);
 		// 	process.stdin.once("data", (data) -> {
 		// 		cb.call(new BString(data.toString().slice(0, -1)));
 		// 	});
-		// 	return VOID;
+		// 	return BVoid.VALUE;
 		// }));
 		globalScope.define("time", new BFunction(_ -> {
 			return new BNumber(Math.floor(Timer.stamp() * 1000));

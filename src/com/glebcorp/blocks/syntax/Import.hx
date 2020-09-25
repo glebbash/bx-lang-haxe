@@ -3,7 +3,7 @@ package com.glebcorp.blocks.syntax;
 import com.glebcorp.blocks.Core;
 import com.glebcorp.blocks.Lexer;
 import com.glebcorp.blocks.engine.Scope;
-import com.glebcorp.blocks.engine.Prelude.BVoid.VOID;
+import com.glebcorp.blocks.engine.Prelude;
 import com.glebcorp.blocks.syntax.Identifier;
 import com.glebcorp.blocks.syntax.Object;
 
@@ -50,7 +50,7 @@ import com.glebcorp.blocks.syntax.Object;
 			ctx.scope.define(pair.getDef(), importCtx.scope.get(pair.name), true);
 		}
 		// TODO: handle varargs import
-		return VOID;
+		return BVoid.VALUE;
 	}
 
 	function toString(s = "", i = "") {

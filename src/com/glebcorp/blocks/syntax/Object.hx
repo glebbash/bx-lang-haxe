@@ -3,7 +3,6 @@ package com.glebcorp.blocks.syntax;
 import com.glebcorp.blocks.Core;
 import com.glebcorp.blocks.Lexer.Token;
 import com.glebcorp.blocks.engine.Engine;
-import com.glebcorp.blocks.engine.Prelude.BVoid.VOID;
 import com.glebcorp.blocks.engine.Prelude;
 import com.glebcorp.blocks.syntax.Assign.AssignableExpr;
 import com.glebcorp.blocks.syntax.Identifier;
@@ -75,9 +74,9 @@ using com.glebcorp.blocks.utils.NullUtils;
 	}
 
 	function define(ctx: Context, value: BValue, constant: Bool) {
-		if (value == VOID) {
+		if (value == BVoid.VALUE) {
 			for (pair in pairs) {
-				ctx.scope.define(pair.getDef(), VOID, constant);
+				ctx.scope.define(pair.getDef(), BVoid.VALUE, constant);
 			}
 			return;
 		}

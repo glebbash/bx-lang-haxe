@@ -3,8 +3,7 @@ package com.glebcorp.blocks.syntax;
 import com.glebcorp.blocks.Core;
 import com.glebcorp.blocks.Lexer;
 import com.glebcorp.blocks.engine.Engine;
-import com.glebcorp.blocks.engine.Prelude.BArray;
-import com.glebcorp.blocks.engine.Prelude.BVoid.VOID;
+import com.glebcorp.blocks.engine.Prelude;
 import com.glebcorp.blocks.syntax.Assign.AssignableExpr;
 import com.glebcorp.blocks.syntax.Identifier;
 import com.glebcorp.blocks.utils.Panic.panic;
@@ -45,9 +44,9 @@ class ArrayAtom implements Atom {
 	}
 
 	function define(ctx: Context, value: BValue, constant: Bool) {
-		if (value == VOID) {
+		if (value == BVoid.VALUE) {
 			for (ident in items) {
-				ctx.scope.define(cast(ident, IdentExpr).name, VOID, constant);
+				ctx.scope.define(cast(ident, IdentExpr).name, BVoid.VALUE, constant);
 			}
 			return;
 		}

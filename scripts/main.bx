@@ -19,10 +19,11 @@ const tests = [
     // "parse_number"
     // "type"
     // "for_gen"
-    "gen_bench"
+    // "gen_bench"
     // "yield_back"
     // "yield_back_1"
     // "async"
+    "bench"
 ]
 
 const stars = "*" * 25

@@ -10,7 +10,7 @@ import com.glebcorp.blocks.utils.Panic.panic;
 using Std;
 using com.glebcorp.blocks.utils.NullUtils;
 
-@:tink class Gen implements Atom {
+@:tink class Async implements Atom {
 	final ident: Identifier = _;
 	final array: ArrayAtom = _;
 	final block: Block = _;
@@ -28,13 +28,13 @@ using com.glebcorp.blocks.utils.NullUtils;
 			return parser.unexpectedToken(paramsToken);
 		});
 		final body = block.blockOrExpr(parser);
-		final fun = new GenFunExpr(params, body);
+		final fun = new AsyncFunExpr(params, body);
 
-		return name == null ? fun : new NamedGenFunExpr(name, fun);
+		return name == null ? fun : new NamedAsyncFunExpr(name, fun);
 	}
 }
 
-@:tink class GenFunExpr implements Expression {
+@:tink class AsyncFunExpr implements Expression {
 	final params: Array<String> = _;
 	final body: Expression = _;
 
@@ -48,18 +48,18 @@ using com.glebcorp.blocks.utils.NullUtils;
                     genCtx.scope.define(params[i], args[i]);
                 }
             }
-            return new BGenerator(genCtx, body);
+            return new BAsyncFunction(genCtx, body).wrap();
         });
 	}
 
 	function toString(s = "", i = "") {
-		return 'gen fun(${params.join(", ")}) ${body.toString(s, i)}';
+		return 'async fun(${params.join(", ")}) ${body.toString(s, i)}';
 	}
 }
 
-@:tink class NamedGenFunExpr implements Expression {
+@:tink class NamedAsyncFunExpr implements Expression {
 	final name: String = _;
-	final fun: GenFunExpr = _;
+	final fun: AsyncFunExpr = _;
 
 	function eval(ctx: Context) {
 		final fun = fun.eval(ctx);
@@ -75,6 +75,6 @@ using com.glebcorp.blocks.utils.NullUtils;
 	}
 
 	function toString(s = "", i = "") {
-		return 'gen fun $name ${fun.params.join(", ")} ${fun.body.toString(s, i)}';
+		return 'async fun $name ${fun.params.join(", ")} ${fun.body.toString(s, i)}';
 	}
 }

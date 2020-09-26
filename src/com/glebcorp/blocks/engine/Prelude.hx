@@ -331,6 +331,13 @@ class BPausedExec extends BWrapper<PausedExec> {
 	final ctx: Context = _;
 	final body: Expression = _;
 
+	function wrap() {
+		return BFunction.f1(cb -> {
+			call(cb.as(BFunction));
+			return BVoid.VALUE;
+		});
+	}
+
 	function call(cb: BFunction, ?val: BValue): BValue {
 		final ret = nextValue(val);
 		if (ended) {

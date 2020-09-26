@@ -10,7 +10,7 @@ import com.glebcorp.blocks.engine.Engine;
 import com.glebcorp.blocks.engine.Prelude;
 import com.glebcorp.blocks.syntax.ArrayAtom;
 import com.glebcorp.blocks.syntax.Assign;
-// import com.glebcorp.blocks.syntax.Async;
+import com.glebcorp.blocks.syntax.Async;
 import com.glebcorp.blocks.syntax.Await;
 import com.glebcorp.blocks.syntax.BinaryOp;
 import com.glebcorp.blocks.syntax.Block;
@@ -180,7 +180,7 @@ class BlocksParser extends Parser<Expression> {
 		addMacro("gen", new Gen(IDENTIFIER, ARRAY, BLOCK));
 		addMacro("yield", new Yield());
 
-		// addMacro("async", new Async());
+		addMacro("async", new Async(IDENTIFIER, ARRAY, BLOCK));
 		addMacro("await", new Await());
 
 		addMacro("export", new Export());

@@ -19,6 +19,7 @@ import com.glebcorp.blocks.syntax.Define;
 import com.glebcorp.blocks.syntax.DoAndAssign;
 import com.glebcorp.blocks.syntax.DoubleSemi;
 import com.glebcorp.blocks.syntax.Export;
+import com.glebcorp.blocks.syntax.For;
 import com.glebcorp.blocks.syntax.Fun;
 import com.glebcorp.blocks.syntax.Identifier;
 import com.glebcorp.blocks.syntax.Import;
@@ -167,7 +168,7 @@ class BlocksParser extends Parser<Expression> {
 		addMacro("if", new If(BLOCK));
 
 		addMacro("while", new While(BLOCK));
-		// addMacro("for", FOR);
+		addMacro("for", new For(BLOCK));
 		addMacro("break", new Break());
 		addMacro("continue", new Continue());
 

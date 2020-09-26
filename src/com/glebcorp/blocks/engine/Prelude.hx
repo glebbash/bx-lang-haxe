@@ -8,14 +8,14 @@ using com.glebcorp.blocks.utils.NullUtils;
 
 //////////////////////////////////
 
-interface BIterable<T> {
-	function iterator(): Iterator<T>;
+interface BIterable {
+	function iterator(): BIterator;
 }
 
-interface BIterator<T> {
+interface BIterator {
 	function hasNext(): Bool;
 
-	function next(): T;
+	function next(): BValue;
 }
 
 //////////////////////////////////
@@ -31,13 +31,13 @@ class BNumber extends BWrapper<Float> {}
 
 //////////////////////////////////
 
-class BString extends BWrapper<String> implements BIterable<BString> {
+class BString extends BWrapper<String> implements BIterable {
 	function iterator() {
 		return new BStringIterator(data);
 	}
 }
 
-@:tink class BStringIterator implements BIterator<BString> {
+@:tink class BStringIterator implements BIterator {
 	var index = 0;
 	final str: String = _;
 
@@ -52,13 +52,26 @@ class BString extends BWrapper<String> implements BIterable<BString> {
 
 //////////////////////////////////
 
-class BArray extends BWrapper<Array<BValue>> implements BIterable<BValue> {
+class BArray extends BWrapper<Array<BValue>> implements BIterable {
 	function iterator() {
-		return data.iterator();
+		return new BArrayIterator(data);
 	}
 
 	override function toString() {
 		return '[${data.join(", ")}]';
+	}
+}
+
+@:tink class BArrayIterator implements BIterator {
+	final data: Array<BValue> = _;
+	var index: Int = 0;
+
+	function hasNext() {
+		return index < data.length;
+	}
+
+	function next() {
+		return data[index++];
 	}
 }
 
@@ -116,7 +129,7 @@ class BObject extends BValue {
 	}
 }
 
-@:tink class BObjectIterator implements BIterator<BArray> {
+@:tink class BObjectIterator implements BIterator {
 	final kvIterator: KeyValueIterator<String, BValue> = _;
 
 	function hasNext() {
@@ -131,7 +144,7 @@ class BObject extends BValue {
 
 //////////////////////////////////
 
-@:tink class BRange extends BValue implements BIterable<BNumber> {
+@:tink class BRange extends BValue implements BIterable {
 	final start: Int = _;
 	final stop: Int = _;
 
@@ -144,7 +157,7 @@ class BObject extends BValue {
 	}
 }
 
-@:tink class BRangeIterator extends BValue implements BIterator<BNumber> {
+@:tink class BRangeIterator extends BValue implements BIterator {
 	final start: Int = _;
 	final stop: Int = _;
 	var index = 0;
@@ -242,7 +255,7 @@ class BPausedExec extends BWrapper<PausedExec> {
 
 //////////////////////////////////
 
-@:tink class BGenerator extends BValue implements BIterable<BValue> implements BIterator<BValue> {
+@:tink class BGenerator extends BValue implements BIterable implements BIterator {
 	var pausedExec = new PausedExec([], BVoid.VALUE, false);
 	var ended = false;
 	final ctx: Context = _;
@@ -303,7 +316,7 @@ class BPausedExec extends BWrapper<PausedExec> {
 		pausedExec = new PausedExec([], returned, false);
 	}
 
-	function iterator(): BIterator<BValue> {
+	function iterator(): BIterator {
 		return this;
 	}
 

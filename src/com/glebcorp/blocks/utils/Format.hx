@@ -7,8 +7,10 @@ using Lambda;
 using StringTools;
 
 class Format {
+    static final regex = ~/\{\}/;
+    
     static function format(template: String, args: BArray): String {
-        final f = (val: BValue, tmp: String) -> tmp.replace("{}", Std.string(val));
+        final f = (val: BValue, tmp: String) -> regex.replace(tmp, Std.string(val));
         return args.data.fold(f, template);
     }
 

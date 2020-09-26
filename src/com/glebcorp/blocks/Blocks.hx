@@ -29,7 +29,7 @@ using com.glebcorp.blocks.utils.NullUtils;
 		operatorRegex: ~/[^ \n\t\r_a-zA-Z0-9\{\}\[\]\(\)'"]/,
 		bracketed: [
 			"{" => new BracketInfo("}", BlockBrace),
-			"[" => new BracketInfo("]", BlockBrace),
+			"[" => new BracketInfo("]", BlockBracket),
 			"(" => new BracketInfo(")", BlockParen),
 		],
 		captureComments: false,
@@ -118,6 +118,7 @@ using com.glebcorp.blocks.utils.NullUtils;
 
 	function eval(source: String, ?ctx: Context): BValue {
 		final tokens = lexer.tokenize(source);
+		trace(tokens);
 		final exprs = parser.parseAll(tokens);
 		final context = ctx.or(new Context(new Scope(globalScope), this));
 		return exprs.map(e -> e.eval(context)).last().unwrap();

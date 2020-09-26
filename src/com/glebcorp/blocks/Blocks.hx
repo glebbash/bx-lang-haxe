@@ -118,7 +118,6 @@ using com.glebcorp.blocks.utils.NullUtils;
 
 	function eval(source: String, ?ctx: Context): BValue {
 		final tokens = lexer.tokenize(source);
-		trace(tokens);
 		final exprs = parser.parseAll(tokens);
 		final context = ctx.or(new Context(new Scope(globalScope), this));
 		return exprs.map(e -> e.eval(context)).last().unwrap();

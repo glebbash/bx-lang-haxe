@@ -1,0 +1,7 @@
+build/common.hxml
+--main Main
+--library hxnodejs
+--library hxtsdgen
+--define js-es=6
+--define node
+--js bin/node/main.js

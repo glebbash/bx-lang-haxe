@@ -107,12 +107,18 @@ using com.glebcorp.blocks.utils.NullUtils;
 	}
 
 	function evalFile(path: String, ?ctx: Context): BValue {
-		#if (!sys)
-		return panic('Error: This platform does not support file I/O');
-		#else
 		final filePath = rootPath + "/" + path.split(".").join("/") + ".bx";
-		final file = sys.io.File.getContent(filePath);
+		final file = readFile(filePath);
 		return eval(file, ctx);
+	}
+
+	private function readFile(path: String): String {
+		#if sys
+		return sys.io.File.getContent(path);
+		#elseif node
+		return js.node.Fs.readFileSync(path, "utf-8");
+		#else
+		return panic('Error: This platform does not support file I/O');
 		#end
 	}
 

@@ -1,5 +1,6 @@
 package com.glebcorp.blocks;
 
+import com.glebcorp.blocks.syntax.Gen;
 import com.glebcorp.blocks.syntax.Dot;
 import com.glebcorp.blocks.syntax.While;
 import com.glebcorp.blocks.syntax.If;
@@ -9,6 +10,7 @@ import com.glebcorp.blocks.engine.Engine;
 import com.glebcorp.blocks.engine.Prelude;
 import com.glebcorp.blocks.syntax.ArrayAtom;
 import com.glebcorp.blocks.syntax.Assign;
+// import com.glebcorp.blocks.syntax.Async;
 import com.glebcorp.blocks.syntax.Await;
 import com.glebcorp.blocks.syntax.BinaryOp;
 import com.glebcorp.blocks.syntax.Block;
@@ -175,10 +177,10 @@ class BlocksParser extends Parser<Expression> {
 		addMacro("fun", new Fun(IDENTIFIER, ARRAY, BLOCK));
 		addMacro("return", new Return());
 
-		// addMacro("gen", GEN);
+		addMacro("gen", new Gen(IDENTIFIER, ARRAY, BLOCK));
 		addMacro("yield", new Yield());
 
-		// addMacro("async", ASYNC);
+		// addMacro("async", new Async());
 		addMacro("await", new Await());
 
 		addMacro("export", new Export());

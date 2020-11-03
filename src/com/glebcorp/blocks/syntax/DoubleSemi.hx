@@ -27,7 +27,11 @@ import com.glebcorp.blocks.Core;
 
 	function eval(ctx: Context) {
 		final args = args.map(arg -> arg.eval(ctx));
-		return obj.eval(ctx).as(BObject).get(name).as(BFunction).call(args);
+		final object = obj.eval(ctx);
+		if (!(object is BMap)) {
+			panic("Cannot get member of ${object.type}");
+		}
+		return cast(object, BMap).get(name).as(BFunction).call(args);
 	}
 
 	function toString(s = "", i = "") {
@@ -40,7 +44,11 @@ import com.glebcorp.blocks.Core;
 	final method: String = _;
 
 	function eval(ctx: Context) {
-		return obj.eval(ctx).as(BObject).get(method);
+		final object = obj.eval(ctx);
+		if (!(object is BMap)) {
+			panic("Cannot get member of ${object.type}");
+		}
+		return cast(object, BMap).get(method);
 	}
 
 	function toString(s = "", i = "") {

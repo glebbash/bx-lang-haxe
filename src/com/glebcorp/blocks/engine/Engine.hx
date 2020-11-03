@@ -7,6 +7,12 @@ using com.glebcorp.blocks.utils.ArrayUtils;
 using com.glebcorp.blocks.utils.ClassName;
 using com.glebcorp.blocks.utils.NullUtils;
 
+interface BMap {
+	function set(key: String, val: BValue): BMap;
+
+	function get(key: String): BValue;
+}
+
 class Engine {
 	final types: Map<String, BType> = [];
 
@@ -22,12 +28,12 @@ class Engine {
 		return types[name];
 	}
 
-	function expectType(name: String) {
-		return types[name].or(panic('There is no $name type in this context'));
+	function expectType(name: String): BType {
+		return getType(name).or(() -> panic('There is no $name type in this context'));
 	}
 }
 
-@:tink class BType {
+@:tink class BType extends BValue implements BMap {
 	private final engine: Engine = _;
 	final name: String = _;
 	final parent: Null<String> = _;
@@ -35,6 +41,15 @@ class Engine {
 
 	inline function extend(subType: String): BType {
 		return engine.addType(subType, name);
+	}
+
+	function set(_: String, _: BValue) {
+		panic('Cannot redefine class methods');
+		return this;
+	}
+
+	function get(key: String) {
+		return expectMethod(key);
 	}
 
 	function addMethod(name: String, method: BFunction) {
@@ -47,7 +62,7 @@ class Engine {
 	}
 
 	function getMethod(name: String): Null<BFunction> {
-		final method = methods[name].or([]).last();
+		final method = methods[name].or(() -> []).last();
 
 		if (method != null) {
 			return method;
@@ -57,10 +72,10 @@ class Engine {
 	}
 
 	function expectMethod(method: String) {
-		return getMethod(method).or(panic('Type $name has no \'$method\' method'));
+		return getMethod(method).or(() -> panic('Type $name has no \'$method\' method'));
 	}
 
-	function toString() {
+	override function toString() {
 		return name;
 	}
 }

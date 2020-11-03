@@ -77,7 +77,7 @@ class BArray extends BWrapper<Array<BValue>> implements BIterable {
 
 //////////////////////////////////
 
-class BObject extends BValue {
+class BObject extends BValue implements BMap {
 	private final data: Map<String, BValue> = [];
 	private final _keys: Array<String> = [];
 
@@ -86,7 +86,7 @@ class BObject extends BValue {
 	}
 
 	function get(prop: String): BValue {
-		return data[prop].or(panic('Prop $prop is not defined'));
+		return data[prop].or(() -> panic('Prop $prop is not defined'));
 	}
 
 	function set(prop: String, val: BValue) {
@@ -224,6 +224,16 @@ class BFunction extends BWrapper<BFunctionBody> {
 class BBreak extends BWrapperMut<Int> {}
 class BContinue extends BWrapperMut<Int> {}
 class BReturn extends BWrapperMut<BValue> {}
+
+//////////////////////////////////
+
+class BNone extends BValue {
+	static final VALUE = new BNone();
+
+	override function toString() {
+		return "none";
+	}
+}
 
 //////////////////////////////////
 

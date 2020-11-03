@@ -40,11 +40,19 @@ import com.glebcorp.blocks.Core;
 	final prop: String = _;
 
 	function eval(ctx: Context) {
-		return obj.eval(ctx).as(BObject).get(prop);
+		final object = obj.eval(ctx);
+		if (!(object is BMap)) {
+			panic("Cannot get member of ${object.type}");
+		}
+		return cast(object, BMap).get(prop);
 	}
 
 	function assign(ctx: Context, value: BValue) {
-		obj.eval(ctx).as(BObject).set(prop, value);
+		final object = obj.eval(ctx);
+		if (!(object is BMap)) {
+			panic("Cannot get member of ${object.type}");
+		}
+		cast(object, BMap).set(prop, value);
 	}
 
 	function isValid() {

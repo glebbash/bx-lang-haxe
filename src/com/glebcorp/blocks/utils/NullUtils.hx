@@ -11,7 +11,7 @@ extern class NullUtils {
 		return @:nullSafety(Off) (value: T);
 	}
 
-	static inline function or<T>(value: Null<T>, def: T): T {
-		return value == null ? def : (value: T);
+	static inline function or<T>(value: Null<T>, def: () -> T): T {
+		return value == null ? def() : (value: T);
 	}
 }

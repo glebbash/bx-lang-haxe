@@ -68,6 +68,6 @@ class Block implements Atom {
 	final line: Int = _;
 
 	function resume(?value : BValue) {
-		return block.resume(ctx, line, value.or(BVoid.VALUE));
+		return block.resume(ctx, line, value.or(() -> BVoid.VALUE));
 	}
 }

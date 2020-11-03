@@ -68,6 +68,6 @@ using com.glebcorp.blocks.utils.NullUtils;
 	final whileExpr: WhileExpr = _;
 
 	function resume(?res: BValue) {
-		return whileExpr.resume(ctx, res.or(BVoid.VALUE));
+		return whileExpr.resume(ctx, res.or(() -> BVoid.VALUE));
 	}
 }

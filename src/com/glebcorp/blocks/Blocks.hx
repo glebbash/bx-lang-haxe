@@ -9,9 +9,9 @@ import com.glebcorp.blocks.engine.Prelude.BFunction.f2;
 import com.glebcorp.blocks.engine.Prelude.BFunction.f3;
 import com.glebcorp.blocks.engine.Prelude;
 import com.glebcorp.blocks.engine.Scope;
+import com.glebcorp.blocks.lib.BTimer;
 import com.glebcorp.blocks.utils.Panic.panic;
 import com.glebcorp.blocks.utils.Println.println;
-import haxe.Timer;
 
 using com.glebcorp.blocks.utils.ArrayUtils;
 using com.glebcorp.blocks.utils.NullUtils;
@@ -42,14 +42,16 @@ using com.glebcorp.blocks.utils.NullUtils;
 	final rootPath: String = _;
 
 	function new() {
-		final Any = engine.addType("Any");
-		Any.extend("Boolean");
-		Any.extend("Number");
-		Any.extend("String");
-		final Array = Any.extend("Array");
-		Any.extend("Object");
-		final Function = Any.extend("Function");
-		final Generator = Function.extend("Generator");
+		final None = expose(engine.addType("None"));
+		final Any = expose(engine.addType("Any"));
+		expose(Any.extend("Boolean"));
+		expose(Any.extend("Number"));
+		final String = expose(Any.extend("String"));
+		final Array = expose(Any.extend("Array"));
+		expose(Any.extend("Object"));
+		final Function = expose(Any.extend("Function"));
+		final Generator = expose(Function.extend("Generator"));
+		final Timer = expose(Any.extend("Timer"));
 
 		Any.addMethod("also", f2((fun, val) -> {
 			fun.as(BFunction).call([val]);
@@ -66,12 +68,38 @@ using com.glebcorp.blocks.utils.NullUtils;
 		})).addMethod("hasNext", f1(gen -> {
 			return bool(!gen.as(BGenerator).ended);
 		}));
+		String.addMethod("split", f2((str, sep) -> {
+			final arr = str.as(BString).data.split(sep.as(BString).data);
+			final res = arr.map(s -> cast(new BString(s), BValue));
+			return new BArray(res);
+		}));
 		Array.addMethod("map", f2((arr, funV) -> {
 			final fun = funV.as(BFunction);
 			return new BArray(arr.as(BArray).data.map(e -> fun.call([e])));
-		})).addMethod("fold", f3((arr, init, funV) -> {
-			final fun = funV.as(BFunction);
-			return Lambda.fold(arr.as(BArray).data, (acc, val) -> fun.call([acc, val]), init);
+		}))
+			.addMethod("fold", f3((arr, init, funV) -> {
+				final fun = funV.as(BFunction);
+				return Lambda.fold(arr.as(BArray).data, (acc, val) -> fun.call([acc, val]), init);
+			}))
+			.addMethod("find", f2((arr, funV) -> {
+				final fun = funV.as(BFunction);
+				final items = arr.as(BArray).data;
+				final item = Lambda.find(items, item -> fun.call([item]) == BBoolean.TRUE);
+				return if (item == null) {
+					BNone.VALUE;
+				} else {
+					item;
+				}
+			}))
+			.addMethod("join", f2((arr, sep) -> {
+				final sepS = sep.as(BString).data;
+				final res = arr.as(BArray).data.join(sepS);
+				return new BString(res);
+			}));
+		Timer.addMethod("passed", new BFunction(args -> {
+			return new BNumber(cast(args[0], BTimer).passed());
+		})).addMethod("start", new BFunction(args -> {
+			return new BTimer();
 		}));
 		globalScope.define("print", f1(val -> {
 			println(val.toString());
@@ -84,12 +112,10 @@ using com.glebcorp.blocks.utils.NullUtils;
 		// 	});
 		// 	return BVoid.VALUE;
 		// }));
-		globalScope.define("time", new BFunction(_ -> {
-			return new BNumber(Math.floor(Timer.stamp() * 1000));
+		globalScope.define("exit", f1(code -> {
+			Sys.exit(Std.int(code.as(BNumber).data));
+			return BVoid.VALUE;
 		}));
-		// globalScope.define("exit", new BFunction((val) -> {
-		// 	process.exit(val ? .as(BNumber) ? .data);
-		// }));
 		globalScope.define("require", f1(pathV -> {
 			var path = pathV.as(BString).data;
 			var importCtx = new Context(new Scope(globalScope, new Set()), this);
@@ -125,7 +151,7 @@ using com.glebcorp.blocks.utils.NullUtils;
 	function eval(source: String, ?ctx: Context): BValue {
 		final tokens = lexer.tokenize(source);
 		final exprs = parser.parseAll(tokens);
-		final context = ctx.or(new Context(new Scope(globalScope), this));
+		final context = ctx.or(() -> new Context(new Scope(globalScope), this));
 		return exprs.map(e -> e.eval(context)).last().unwrap();
 	}
 
@@ -133,5 +159,10 @@ using com.glebcorp.blocks.utils.NullUtils;
 		final tokens = lexer.tokenize(source);
 		final exprs = parser.parseAll(tokens);
 		return exprs.map(expr -> expr.toString()).join("\n");
+	}
+
+	private function expose(type: BType): BType {
+		globalScope.define(type.name, type, true);
+		return type;
 	}
 }

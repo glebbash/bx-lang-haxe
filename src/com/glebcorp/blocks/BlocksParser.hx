@@ -104,7 +104,7 @@ class BlocksParser extends Parser<Expression> {
 	static final POW: BinaryFun = (a, b) -> num(Math.pow(a.num(), b.num()));
 
 	function new() {
-		super([], []);
+		super([], [], null);
 		var prec = RelativePrecedence.precedence();
 
 		binaryOp(prec("+").moreThan("MIN"), ADD);

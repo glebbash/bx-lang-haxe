@@ -6,6 +6,7 @@ import com.glebcorp.blocks.utils.Streams.stream;
 import com.glebcorp.blocks.utils.SyntaxError.syntaxError;
 
 using com.glebcorp.blocks.utils.NullUtils;
+using com.glebcorp.blocks.utils.TokenText;
 
 interface PrefixParser<E, T: E> {
 	function parse(parser: Parser<E>, token: Token): T;
@@ -128,14 +129,14 @@ class Parser<E> {
 		}
 		if (cond.type != null) {
 			return token.type == cond.type;
-		} else if (cond.value != null) {
+		}
+		if (cond.value != null) {
 			return switch (token.value) {
 				case TokenValue.Text(val): val == cond.value;
 				default: false;
 			};
-		} else {
-			return getTokenType(token) == cond.complexType.unwrap();
 		}
+		return getTokenType(token) == cond.complexType.unwrap();
 	}
 
 	function next(consume = true): Token {
@@ -155,15 +156,13 @@ class Parser<E> {
 			case BlockBrace: "<BLOCK_BRACE>";
 			case BlockBracket: "<BLOCK_BRACKET>";
 			case BlockIndent: "<BLOCK_INDENT>";
-			case TokenType.Operator:
-				switch (token.value) {
-					case TokenValue.Text(val): val;
-					default: unexpectedToken(token);
-				}
-			case TokenType.Identifier:
-				switch (token.value) {
-					case TokenValue.Text(val): prefix.exists(val) || postfix.exists(val) ? val : "<IDENT>";
-					default: unexpectedToken(token);
+			case Operator: this.text(token);
+			case Identifier:
+				final val = this.text(token);
+				if (prefix.exists(val) || postfix.exists(val)) {
+					val;
+				} else {
+					"<IDENT>";
 				}
 			default: unexpectedToken(token);
 		};

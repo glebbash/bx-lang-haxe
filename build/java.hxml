@@ -1,0 +1,4 @@
+build/common.hxml
+
+--main Main
+--java bin/java

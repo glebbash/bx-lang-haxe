@@ -1,0 +1,4 @@
+build/common.hxml
+
+--main Main
+--jvm bin/jvm/main.jar

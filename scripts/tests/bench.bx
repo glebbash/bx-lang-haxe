@@ -1,6 +1,6 @@
-const was = time()
+const timer = Timer.start()
 
 for (e in 1..1000000)
     2 + 2
 
-print(time() - was)
+print(timer.passed())

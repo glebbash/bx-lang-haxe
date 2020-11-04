@@ -1,0 +1,75 @@
+const codes_str = """
+    a: *-
+    b: -***
+    c: -*-*
+    d: -**
+    e: *
+    f: **-*
+    g: --*
+    h: ****
+    i: **
+    k: -*-
+    l: *-**
+    m: --
+    n: -*
+    o: ---
+    p: *--*
+    q: --*-
+    r: *-*
+    s: ***
+    t: -
+    u: **-
+    v: ***-
+    w: *--
+    x: -**-
+    y: -*--
+    x: --**
+    1: *----
+    2: **---
+    3: ***--
+    4: ****-
+    5: *****
+    6: -****
+    7: --***
+    8: ---**
+    9: ----*
+    0: -----
+    """
+
+const codes_table = codes_str
+    .split("\n")
+    .map(fun(line) line.split(": "))
+
+// def codes_table = codes_str
+//     >> String.split("\n")
+//     >> Enum.map(String.split($1, ": "))
+
+fun char_from_morse(char) {
+    return codes_table
+        .find(fun(pair) pair[1] == char)
+        [0]
+}
+
+// def char_from_morse(char)
+//     codes_table
+//         >> Enum.find(fun(pair) pair[1] == char)
+//         >> Enum.first
+
+export fun from_morse(code) {
+    return code
+        .split(" ")
+        .map(char_from_morse)
+        .join("")
+}
+
+// export def from_morse(code)
+//     code
+//         >> String.split(" ")
+//         >> Enum.map(char_from_morse)
+//         >> Enum.join("")
+
+// using { from_morse } from "morse"
+
+const test_msg = "**-* **- -*-* -*- -*-- --- **- *-* *** * *-** **-*"
+
+print(from_morse(test_msg))

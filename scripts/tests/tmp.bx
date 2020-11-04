@@ -1,9 +1,89 @@
-// print("""
-//     Hello world!
-//     """)
-// print((2 + 2) * 2)
-// print({ a: 1, b: 2, c: 3 })
+print(test_msg >> Morse.from_morse)
 
-let x = 1
+print(String.split("abc", ""))
+print("abc" >> String.split(""))
 
-print(x)
+print(Enum.map([1, 2, 3], fun(x) x * 10))
+print([1, 2, 3] >> Enum.map(fun(x) x * 10))
+
+print(Enum.fold([1, 2, 3], 0, fun(x, acc) x + acc))
+print([1, 2, 3] >> Enum.fold(0, fun(x, acc) x + acc))
+
+const arr = [1, 2, 3, 4, 5, 6]
+
+const res1 = arr
+    .map(fun(x) x * 10)
+    .fold(0, fun(a, b) a + b)
+
+const res2 = arr
+    >> Enum.map(fun(x) x * 10)
+    >> Enum.fold(0, fun(a, b) a + b)
+
+import blocks.core.Math
+
+class A {
+    let func = fun(x: String) print(x)
+     
+    fun method(self, x: String) {
+        print(x)
+    }
+
+    // allow static funs ?
+    fun static_fun(x: String) {
+        print(x)
+    }
+}
+
+A.func("hi") // ! error
+A.method(nil, "hi")
+A.static_fun("hi") // ? allow
+
+let a = A()
+a.func("hi")
+a.method("hi")
+a.static_fun("hi") // ? error
+
+Type.of(true)
+Math.round(1.5)
+Sys.print("hi")
+
+/////////////////
+
+import lib.Json
+
+let a = Json.parse('{"a":1}')
+
+/////////////////////////
+
+import utils.log::{ logger, Logger }
+
+let log: Logger = logger("TAG")
+
+log.debug("what")
+log.info("Hello")
+log.warn("oops")
+log.error("bam!")
+
+//////////////////
+
+class MutableList<T> : List<T> { ... }
+
+///////////////////////////
+
+fun join<T>(a: T, b: T): List<T> {
+    return [a, b]
+}
+
+join<Int>(a, b)
+
+module Math {
+    fun sin(x: Float): Float
+    
+    fun round(x: Float): Int
+}
+
+import bx.core.Math
+
+Math.sin(3)
+Math.round(3.5)
+

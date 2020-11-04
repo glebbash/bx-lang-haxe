@@ -1,4 +1,4 @@
-fun Adult(x) x
+fun Adult(x) return { type: "Adult", ...x }
 const Child = Adult
 
 const res = Adult({

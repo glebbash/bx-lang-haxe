@@ -12,7 +12,11 @@ class Main {
 
 	static function evalTest() {
 		var blocks = new Blocks("scripts");
-		println(blocks.evalFile("main"));
+		try {
+			println(blocks.evalFile("main"));
+		} catch (e) {
+			println(e);
+		}
 	}
 
 	static function parserTest() {

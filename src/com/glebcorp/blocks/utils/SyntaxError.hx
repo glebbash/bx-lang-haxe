@@ -7,7 +7,7 @@ import com.glebcorp.blocks.Lexer.Position;
 	final position: Position = _;
 
 	function toString() {
-		return 'Syntax error $message\n\tat $position';
+		return 'SyntaxError: $message\n    at $position';
 	}
 
 	static extern inline function syntaxError(message: String, position: Position): Any {

@@ -1,0 +1,21 @@
+def x = 1
+print(x)
+
+def mut y = 1
+y = 2
+print(y)
+
+def f(x) = x + 1
+print(f(2))
+
+/////////////////
+
+def Enum = Array
+
+def toString(x) = "" + x
+
+def join(arr, sep) = arr
+    >> Enum::map(toString)
+    >> Enum::reduce(fun(x, acc) acc + sep + x)
+
+print([1, 2, 3] >> join(" + "))

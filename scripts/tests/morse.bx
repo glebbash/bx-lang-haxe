@@ -50,10 +50,9 @@ fun char_from_morse(char) {
         [0]
 }
 
-// def char_from_morse(char)
-//     codes_table
-//         >> Enum.find(fun(pair) pair[1] == char)
-//         >> Enum.first
+// def char_from_morse(char) codes_table
+//     >> Enum.find(fun(pair) pair[1] == char)
+//     >> Enum.first
 
 export fun from_morse(code) {
     return code
@@ -62,11 +61,10 @@ export fun from_morse(code) {
         .join("")
 }
 
-// export def from_morse(code)
-//     code
-//         >> String.split(" ")
-//         >> Enum.map(char_from_morse)
-//         >> Enum.join("")
+// export def from_morse(code) code
+//     >> String.split(" ")
+//     >> Enum.map(char_from_morse)
+//     >> Enum.join("")
 
 // using { from_morse } from "morse"
 

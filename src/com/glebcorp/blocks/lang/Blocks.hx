@@ -121,7 +121,11 @@ using com.glebcorp.blocks.utils.NullUtils;
 		// 	return BVoid.VALUE;
 		// }));
 		globalScope.define("exit", f1(code -> {
+			#if sys
 			Sys.exit(Std.int(code.as(BNumber).data));
+			#else
+			panic("Exiting with code " + Std.int(code.as(BNumber).data));
+			#end
 			return BVoid.VALUE;
 		}));
 		globalScope.define("require", f1(pathV -> {

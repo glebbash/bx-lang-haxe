@@ -5,38 +5,10 @@ import com.glebcorp.blocks.parser.RelativePrecedence;
 import com.glebcorp.blocks.lang.Core;
 import com.glebcorp.blocks.lang.Engine;
 import com.glebcorp.blocks.lang.Prelude;
-import com.glebcorp.blocks.lang.syntax.Gen;
-import com.glebcorp.blocks.lang.syntax.Dot;
-import com.glebcorp.blocks.lang.syntax.While;
-import com.glebcorp.blocks.lang.syntax.If;
-import com.glebcorp.blocks.lang.syntax.Element;
-import com.glebcorp.blocks.lang.syntax.ArrayAtom;
-import com.glebcorp.blocks.lang.syntax.Assign;
-import com.glebcorp.blocks.lang.syntax.Async;
-import com.glebcorp.blocks.lang.syntax.Await;
+import com.glebcorp.blocks.lang.syntax.*;
 import com.glebcorp.blocks.lang.syntax.BinaryOp;
-import com.glebcorp.blocks.lang.syntax.Block;
-import com.glebcorp.blocks.lang.syntax.Break;
-import com.glebcorp.blocks.lang.syntax.Call;
-import com.glebcorp.blocks.lang.syntax.Continue;
-// import com.glebcorp.blocks.lang.syntax.Define;
-import com.glebcorp.blocks.lang.syntax.DefineVar;
-import com.glebcorp.blocks.lang.syntax.DoAndAssign;
-import com.glebcorp.blocks.lang.syntax.DoubleSemi;
-import com.glebcorp.blocks.lang.syntax.Export;
-import com.glebcorp.blocks.lang.syntax.For;
-import com.glebcorp.blocks.lang.syntax.Fun;
-import com.glebcorp.blocks.lang.syntax.Identifier;
-import com.glebcorp.blocks.lang.syntax.Import;
-import com.glebcorp.blocks.lang.syntax.Indent;
-import com.glebcorp.blocks.lang.syntax.Is;
-import com.glebcorp.blocks.lang.syntax.Literal;
-import com.glebcorp.blocks.lang.syntax.Object;
-import com.glebcorp.blocks.lang.syntax.Paren;
-import com.glebcorp.blocks.lang.syntax.Pipe;
-import com.glebcorp.blocks.lang.syntax.Return;
 import com.glebcorp.blocks.lang.syntax.UnaryOp;
-import com.glebcorp.blocks.lang.syntax.Yield;
+import com.glebcorp.blocks.lang.syntax.Literal;
 import com.glebcorp.blocks.lang.lib.Format;
 import com.glebcorp.blocks.utils.Panic.panic;
 
@@ -147,6 +119,9 @@ class BlocksParser extends Parser<Expression> {
 		final LITERAL = new Literal();
 		final OBJECT = new Object(IDENTIFIER);
 		final BLOCK = new Block();
+		final FUN = new Fun(IDENTIFIER, ARRAY, BLOCK);
+		final VAR = new DefineVar(false);
+		final CONST = new DefineVar(true);
 
 		postfix["<BLOCK_PAREN>"] = new Call(prec("<CALL>").moreThan("^").prec, ARRAY);
 		postfix["<BLOCK_BRACKET>"] = new Element(prec("<ELEM>").sameAs("<CALL>").prec);
@@ -157,7 +132,7 @@ class BlocksParser extends Parser<Expression> {
 		postfix["."] = new Dot(prec(".").sameAs("<CALL>").prec, IDENTIFIER, ARRAY);
 		postfix["::"] = new DoubleSemi(prec("::").sameAs(".").prec, IDENTIFIER, ARRAY);
 		postfix[">>"] = new Pipe(prec(">>").lessThan(".").prec);
-		
+
 		addMacro("<IDENT>", IDENTIFIER);
 		addMacro("<NUMBER>", LITERAL);
 		addMacro("<STRING>", LITERAL);
@@ -168,11 +143,9 @@ class BlocksParser extends Parser<Expression> {
 		addMacro("true", new ConstLiteral(BBoolean.TRUE));
 		addMacro("false", new ConstLiteral(BBoolean.FALSE));
 
-		addMacro("let", new DefineVar(false));
-		addMacro("const", new DefineVar(true));
-		addMacro("var", new DefineVar(false));
-		addMacro("val", new DefineVar(true));
-		// addMacro("def", new Define());
+		addMacro("let", VAR);
+		addMacro("const", CONST);
+		addMacro("def", new Define(VAR, CONST, FUN));
 
 		addMacro("if", new If(BLOCK));
 
@@ -181,7 +154,7 @@ class BlocksParser extends Parser<Expression> {
 		addMacro("break", new Break());
 		addMacro("continue", new Continue());
 
-		addMacro("fun", new Fun(IDENTIFIER, ARRAY, BLOCK));
+		addMacro("fun", FUN);
 		addMacro("return", new Return());
 
 		addMacro("gen", new Gen(IDENTIFIER, ARRAY, BLOCK));

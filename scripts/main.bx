@@ -25,7 +25,8 @@ const tests = [
     // "async"
     // "bench"
     // "morse"
-    "pipe"
+    // "pipe"
+    "def"
 ]
 
 const stars = "*" * 25

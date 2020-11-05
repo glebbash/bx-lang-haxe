@@ -21,7 +21,7 @@ class Indent implements Action {
     }
 
     function precedence(parser: ExprParser): Float {
-        final token = parser.next(false);
+        final token = parser.expectNext();
         return switch (token.value) {
             case Tokens(expr):
                 final sub = parser.expectPostfixParser(expr[0][0]);

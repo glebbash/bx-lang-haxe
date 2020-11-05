@@ -1,15 +1,17 @@
 package com.glebcorp.blocks.parser;
 
+import com.glebcorp.blocks.lexer.Lexer;
+
 @:tink class ArrayTokenStream implements TokenStream {
 	final tokens: Array<Token> = _;
-	final index = 0;
+	var index = -1;
 
-	function next() {
-		return index < items.lenth ? items[i++] : null;
+	function next(): Null<Token> {
+		return index + 1 < tokens.length ? tokens[++index] : null;
     }
     
-    function peek(lookahead: Int): Token {
+    function peek(lookahead: Int = 1): Null<Token> {
         final index = index + lookahead;
-        return index < items.lenth ? items[i++] : null
+        return index >= 0 && index < tokens.length ? tokens[index] : null;
     }
 }

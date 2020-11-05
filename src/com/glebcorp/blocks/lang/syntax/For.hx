@@ -16,8 +16,10 @@ using com.glebcorp.blocks.utils.NullUtils;
 	final block: Block = _;
 
 	function parse(parser: ExprParser, token: Token): ForExpr {
-		final condParser = parser.nextIs({type: TokenType.BlockParen}) ? parser.subParser(Paren.parenExpr(parser, parser.next())) : parser;
-		final bindingStartToken = condParser.next(false);
+		final condParser = parser.nextIs({type: TokenType.BlockParen})
+			? parser.subParser(Paren.parenExpr(parser, parser.next()))
+			: parser;
+		final bindingStartToken = condParser.expectNext();
 		final binding = condParser.parse();
 		if (!binding.isOfType(AssignableExpr)
 			|| !cast(binding, AssignableExpr).isDefinable() || !cast(binding, AssignableExpr).isValid()) {

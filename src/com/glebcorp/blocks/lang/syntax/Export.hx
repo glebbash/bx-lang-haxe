@@ -17,7 +17,7 @@ class Export implements Atom {
 	function new() {}
 
 	function parse(parser: ExprParser, token: Token): ExportExpr {
-		final token = parser.next(false);
+		final token = parser.expectNext();
 		final expr = parser.parse();
 		if (!expr.isOfType(ExportableExpr)) {
 			parser.unexpectedToken(token);

@@ -29,7 +29,7 @@ using com.glebcorp.blocks.utils.NullUtils;
 				final pairs: Array<KVPair> = [];
 				for (expr in exprs) {
 					final subParser = parser.subParser(expr);
-					while (subParser.nextToken(false) != null) {
+					while (subParser.tokens.peek() != null) {
 						final name = identifier.expect(subParser).name;
 						final value: Null<Expression> = if (subParser.nextIs({value: ":"})) {
 							subParser.next();
@@ -38,7 +38,7 @@ using com.glebcorp.blocks.utils.NullUtils;
 							null;
 						};
 						pairs.push(new KVPair(name, value));
-						if (subParser.nextToken(false) != null) {
+						if (subParser.tokens.peek() != null) {
 							subParser.expect({value: ","});
 						}
 					}

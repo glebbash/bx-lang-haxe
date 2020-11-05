@@ -18,7 +18,7 @@ class Block implements Atom {
 	}
 
 	function blockOrExpr(parser: ExprParser): BlockExpr {
-		return isBlock(parser.next(false)) ? expect(parser) : new BlockExpr([parser.parse()]);
+		return isBlock(parser.expectNext()) ? expect(parser) : new BlockExpr([parser.parse()]);
 	}
 
 	function expect(parser: ExprParser): BlockExpr {

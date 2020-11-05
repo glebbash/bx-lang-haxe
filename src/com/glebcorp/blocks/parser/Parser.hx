@@ -25,22 +25,20 @@ class TokenCondition {
 
 class Parser<E> {
 	private static final START_TOKEN = new Token(TokenType.Comment, TokenValue.Text(""), new Position(1, 1), new Position(1, 1));
-	private static final EMPTY_STREAM: Stream<Token> = stream([]);
-
-	private var prevToken = START_TOKEN;
+	private static final EMPTY_STREAM: ArrayTokenStream = stream([]);
 
 	final prefix: Map<String, PrefixParser<E, E>>;
 	final postfix: Map<String, PostfixParser<E, E>>;
-	var nextToken: Stream<Token>;
+	var tokens: ArrayTokenStream = EMPTY_STREAM;
 
 	function new(pre, post, ?tokens) {
 		prefix = pre;
 		postfix = post;
-		nextToken = tokens == null ? EMPTY_STREAM : tokens;
+		this.tokens = tokens == null ? EMPTY_STREAM : tokens;
 	}
 
-	static function stream() {
-
+	static function stream(tokens: Tokens) {
+		return new ArrayTokenStream(tokens);
 	}
 
 	function subParser(expr: Tokens): Parser<E> {
@@ -49,7 +47,7 @@ class Parser<E> {
 
 	function parseAll(exprs: Array<Tokens>): Array<E> {
 		return exprs.map(expr -> {
-			nextToken = stream(expr);
+			tokens = stream(expr);
 			return parseToEnd();
 		});
 	}
@@ -73,14 +71,14 @@ class Parser<E> {
 	}
 
 	function checkTrailing() {
-		final next = nextToken(false);
+		final next = tokens.peek();
 		if (next != null) {
 			unexpectedToken(next);
 		}
 	}
 
 	function tokenPrecedence(): Float {
-		final token = nextToken(false);
+		final token = tokens.peek();
 		if (token == null) {
 			return 0;
 		}
@@ -119,13 +117,13 @@ class Parser<E> {
 
 	function expect(cond: TokenCondition): Token {
 		if (!nextIs(cond)) {
-			unexpectedToken(nextToken(false));
+			unexpectedToken(tokens.peek());
 		}
 		return next();
 	}
 
 	function nextIs(cond: TokenCondition): Bool {
-		final token = nextToken(false);
+		final token = tokens.peek();
 		if (token == null) {
 			return false;
 		}
@@ -141,12 +139,19 @@ class Parser<E> {
 		return getTokenType(token) == cond.complexType.unwrap();
 	}
 
-	function next(consume = true): Token {
-		final token = nextToken(consume);
+	function next(): Token {
+		final token = tokens.next();
 		if (token == null) {
 			return unexpectedToken(token);
 		}
-		prevToken = token;
+		return token;
+	}
+
+	function expectNext(): Token {
+		final token = tokens.peek();
+		if (token == null) {
+			return unexpectedToken(token);
+		}
 		return token;
 	}
 
@@ -172,7 +177,11 @@ class Parser<E> {
 
 	function unexpectedToken(token: Null<Token>): Any {
 		if (token == null) {
-			return syntaxError("Unexpected end of expression", prevToken.end);
+			var prevToken = tokens.peek(-1);
+			if (prevToken == null) {
+				return syntaxError("Unexpected end of expression", new Position(-1, -1));
+			}
+ 			return syntaxError("Unexpected end of expression", prevToken.unwrap().end);
 		}
 		return syntaxError('Unexpected token: \'${getTokenType(token)}\'', token.start);
 	}

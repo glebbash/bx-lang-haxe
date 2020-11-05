@@ -19,9 +19,9 @@ class ArrayAtom implements Atom {
 				final items: Array<Expression> = [];
 				for (expr in exprs) {
 					final subParser = parser.subParser(expr);
-					while (subParser.nextToken(false) != null) {
+					while (subParser.tokens.peek() != null) {
 						items.push(subParser.parse());
-						if (subParser.nextToken(false) != null) {
+						if (subParser.tokens.peek() != null) {
 							subParser.expect({value: ","});
 						}
 					}

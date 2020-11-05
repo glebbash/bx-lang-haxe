@@ -133,7 +133,7 @@ using com.glebcorp.blocks.utils.NullUtils;
 	}
 
 	function evalFile(path: String, ?ctx: Context): BValue {
-		final filePath = rootPath + "/" + path.split(".").join("/") + ".bx";
+		final filePath = '${rootPath}/${path}.bx';
 		final file = readFile(filePath);
 		return eval(file, ctx);
 	}

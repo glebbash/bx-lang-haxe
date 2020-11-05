@@ -32,6 +32,6 @@ const stars = "*" * 25
 
 for (test in tests) {
     print("{}\n{}\n{}" % [stars, test, stars])
-    require("tests." + test)
+    require("tests/" + test)
     print(stars + "\n")
 }

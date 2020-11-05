@@ -1,6 +1,6 @@
 package com.glebcorp.blocks.utils;
 
-import com.glebcorp.blocks.Lexer;
+import com.glebcorp.blocks.lexer.Lexer;
 
 class TokenText {
 	static function text<T>(parser: Parser<T>, token: Token): String {

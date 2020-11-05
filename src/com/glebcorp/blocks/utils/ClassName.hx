@@ -1,6 +1,6 @@
 package com.glebcorp.blocks.utils;
 
-import com.glebcorp.blocks.engine.Engine;
+import com.glebcorp.blocks.lang.Engine;
 
 using Type;
 using com.glebcorp.blocks.utils.ArrayUtils;

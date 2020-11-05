@@ -98,7 +98,7 @@ class Parser<E> {
 	function expectPostfixParser(token: Token): PostfixParser<E, E> {
 		final parser = getPostfixParser(token);
 		if (parser == null) {
-			return syntaxError("Invalid prefix operator: " + token.value, token.start);
+			return syntaxError("Invalid operator: " + token.value, token.start);
 		}
 		return parser;
 	}
@@ -110,7 +110,7 @@ class Parser<E> {
 	function expectPrefixParser(token: Token): PrefixParser<E, E> {
 		final parser = getPrefixParser(token);
 		if (parser == null) {
-			return syntaxError("Invalid operator: " + token.value, token.start);
+			return syntaxError("Invalid prefix operator: " + token.value, token.start);
 		}
 		return parser;
 	}

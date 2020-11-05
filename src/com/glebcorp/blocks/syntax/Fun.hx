@@ -14,7 +14,7 @@ using com.glebcorp.blocks.utils.NullUtils;
 
 @:tink class Fun implements Atom {
     final ident: Identifier = _;
-    final array: ArrayAtom = _;
+    final params: ArrayAtom = _;
     final block: Block = _;
 
 	function parse(parser: ExprParser, token: Token): Expression {
@@ -23,7 +23,7 @@ using com.glebcorp.blocks.utils.NullUtils;
 			name = ident.parse(parser, parser.next()).name;
 		}
 		final paramsToken = parser.expect({type: TokenType.BlockParen});
-		final paramsExpr = array.parse(parser, paramsToken);
+		final paramsExpr = params.parse(parser, paramsToken);
 		final params = paramsExpr.items.map(paramExpr -> {
 			if (paramExpr.isOfType(IdentExpr)) {
 				return cast(paramExpr, IdentExpr).name;

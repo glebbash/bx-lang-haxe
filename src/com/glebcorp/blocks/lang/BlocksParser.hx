@@ -1,5 +1,7 @@
 package com.glebcorp.blocks.lang;
 
+import com.glebcorp.blocks.parser.Parser;
+import com.glebcorp.blocks.parser.RelativePrecedence;
 import com.glebcorp.blocks.lang.Core;
 import com.glebcorp.blocks.lang.Engine;
 import com.glebcorp.blocks.lang.Prelude;
@@ -17,7 +19,7 @@ import com.glebcorp.blocks.lang.syntax.Block;
 import com.glebcorp.blocks.lang.syntax.Break;
 import com.glebcorp.blocks.lang.syntax.Call;
 import com.glebcorp.blocks.lang.syntax.Continue;
-import com.glebcorp.blocks.lang.syntax.Define;
+// import com.glebcorp.blocks.lang.syntax.Define;
 import com.glebcorp.blocks.lang.syntax.DefineVar;
 import com.glebcorp.blocks.lang.syntax.DoAndAssign;
 import com.glebcorp.blocks.lang.syntax.DoubleSemi;
@@ -35,9 +37,8 @@ import com.glebcorp.blocks.lang.syntax.Pipe;
 import com.glebcorp.blocks.lang.syntax.Return;
 import com.glebcorp.blocks.lang.syntax.UnaryOp;
 import com.glebcorp.blocks.lang.syntax.Yield;
-import com.glebcorp.blocks.utils.Format;
+import com.glebcorp.blocks.lang.lib.Format;
 import com.glebcorp.blocks.utils.Panic.panic;
-import com.glebcorp.blocks.utils.RelativePrecedence;
 
 using com.glebcorp.blocks.lang.BlocksParser.BValueUtils;
 using com.glebcorp.blocks.lang.BlocksParser.ExpectNo;
@@ -171,7 +172,7 @@ class BlocksParser extends Parser<Expression> {
 		addMacro("const", new DefineVar(true));
 		addMacro("var", new DefineVar(false));
 		addMacro("val", new DefineVar(true));
-		addMacro("def", new Define());
+		// addMacro("def", new Define());
 
 		addMacro("if", new If(BLOCK));
 

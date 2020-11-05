@@ -24,7 +24,8 @@ const tests = [
     // "yield_back_1"
     // "async"
     // "bench"
-    "morse"
+    // "morse"
+    "pipe"
 ]
 
 const stars = "*" * 25

@@ -4,6 +4,8 @@ import com.glebcorp.blocks.utils.Panic.panic;
 import com.glebcorp.blocks.engine.Prelude;
 import com.glebcorp.blocks.engine.Engine;
 import com.glebcorp.blocks.syntax.Assign;
+import com.glebcorp.blocks.syntax.Call;
+import com.glebcorp.blocks.syntax.ArrayAtom;
 import com.glebcorp.blocks.Lexer;
 import com.glebcorp.blocks.Core;
 
@@ -14,19 +16,18 @@ import com.glebcorp.blocks.Core;
 	override function parse(parser: ExprParser, token: Token, obj: Expression): Expression {
 		final name = ident.expect(parser, true).name;
 		if (parser.nextIs({type: TokenType.BlockParen})) {
-			return new PropCallExpr(obj, name, array.parse(parser, parser.next()).items);
+			return new PropCallExpr(obj, name, array.parse(parser, parser.next()));
 		}
 		return new MethodGetExpr(obj, name);
 	}
 }
 
-@:tink class PropCallExpr implements Expression {
+@:tink class PropCallExpr implements CallableExpression {
 	final obj: Expression = _;
 	final name: String = _;
-	final args: Array<Expression> = _;
+	final args: ArrayExpr = _;
 
-	function eval(ctx: Context) {
-		final args = args.map(arg -> arg.eval(ctx));
+	function call(ctx: Context, args: Array<BValue>) {
 		final object = obj.eval(ctx);
 		if (!(object is BMap)) {
 			panic("Cannot get member of ${object.type}");
@@ -35,7 +36,7 @@ import com.glebcorp.blocks.Core;
 	}
 
 	function toString(s = "", i = "") {
-		return '${obj.toString(s, i)}::$name(${args.map(it -> it.toString(s, i)).join(", ")})';
+		return '${obj.toString(s, i)}::$name(${args.toString(s, i)})';
 	}
 }
 

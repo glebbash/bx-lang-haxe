@@ -4,6 +4,8 @@ import com.glebcorp.blocks.utils.Panic.panic;
 import com.glebcorp.blocks.engine.Prelude;
 import com.glebcorp.blocks.engine.Engine;
 import com.glebcorp.blocks.syntax.Assign;
+import com.glebcorp.blocks.syntax.Call;
+import com.glebcorp.blocks.syntax.ArrayAtom;
 import com.glebcorp.blocks.Lexer;
 import com.glebcorp.blocks.Core;
 
@@ -14,24 +16,23 @@ import com.glebcorp.blocks.Core;
 	override function parse(parser: ExprParser, token: Token, obj: Expression): Expression {
 		final name = ident.expect(parser, true).name;
 		if (parser.nextIs({type: TokenType.BlockParen})) {
-			return new MethodCallExpr(obj, name, array.parse(parser, parser.next()).items);
+			return new MethodCallExpr(obj, name, array.parse(parser, parser.next()));
 		}
 		return new PropExpr(obj, name);
 	}
 }
 
-@:tink class MethodCallExpr implements Expression {
+@:tink class MethodCallExpr implements CallableExpression {
 	final obj: Expression = _;
 	final method: String = _;
-	final args: Array<Expression> = _;
+	final args: ArrayExpr = _;
 
-	function eval(ctx: Context) {
-        final args = args.map(arg -> arg.eval(ctx));
+	function call(ctx: Context, args: Array<BValue>) {
 		return obj.eval(ctx).invoke(ctx.core.engine, method, args);
 	}
 
 	function toString(s = "", i = "") {
-		return '${obj.toString(s, i)}.$method(${args.map(it -> it.toString(s, i)).join(", ")})';
+		return '${obj.toString(s, i)}.$method(${args.toString(s, i)})';
 	}
 }
 

@@ -1,0 +1,7 @@
+[1, 2, 3] >> Array::join(", ") >> print
+
+fun add(a, b) a + b
+fun sub(a, b) a - b
+
+1 >> add(2) >> print
+5 >> sub(3) >> print

@@ -30,6 +30,7 @@ import com.glebcorp.blocks.syntax.Is;
 import com.glebcorp.blocks.syntax.Literal;
 import com.glebcorp.blocks.syntax.Object;
 import com.glebcorp.blocks.syntax.Paren;
+import com.glebcorp.blocks.syntax.Pipe;
 import com.glebcorp.blocks.syntax.Return;
 import com.glebcorp.blocks.syntax.UnaryOp;
 import com.glebcorp.blocks.syntax.Yield;
@@ -151,9 +152,10 @@ class BlocksParser extends Parser<Expression> {
 
 		postfix["is"] = new Is(prec("is").sameAs("+").prec, IDENTIFIER);
 
-		postfix["."] = new Dot(prec(".").moreThan("^").prec, IDENTIFIER, ARRAY);
+		postfix["."] = new Dot(prec(".").sameAs("<CALL>").prec, IDENTIFIER, ARRAY);
 		postfix["::"] = new DoubleSemi(prec("::").sameAs(".").prec, IDENTIFIER, ARRAY);
-
+		postfix[">>"] = new Pipe(prec(">>").lessThan(".").prec);
+		
 		addMacro("<IDENT>", IDENTIFIER);
 		addMacro("<NUMBER>", LITERAL);
 		addMacro("<STRING>", LITERAL);

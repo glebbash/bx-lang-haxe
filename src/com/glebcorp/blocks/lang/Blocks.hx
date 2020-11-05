@@ -73,13 +73,21 @@ using com.glebcorp.blocks.utils.NullUtils;
 			final res = arr.map(s -> cast(new BString(s), BValue));
 			return new BArray(res);
 		}));
-		Array.addMethod("map", f2((arr, funV) -> {
-			final fun = funV.as(BFunction);
-			return new BArray(arr.as(BArray).data.map(e -> fun.call([e])));
-		}))
+		Array
+			.addMethod("map", f2((arr, funV) -> {
+				final fun = funV.as(BFunction);
+				return new BArray(arr.as(BArray).data.map(e -> fun.call([e])));
+			}))
 			.addMethod("fold", f3((arr, init, funV) -> {
 				final fun = funV.as(BFunction);
-				return Lambda.fold(arr.as(BArray).data, (acc, val) -> fun.call([acc, val]), init);
+				return Lambda.fold(arr.as(BArray).data, (val, acc) -> fun.call([val, acc]), init);
+			}))
+			.addMethod("reduce", f2((arr, funV) -> {
+				final fun = funV.as(BFunction);
+				final data = arr.as(BArray).data;
+				final head = data[0];
+				final tail = data.slice(1);
+				return Lambda.fold(tail, (acc, val) -> fun.call([acc, val]), head);
 			}))
 			.addMethod("find", f2((arr, funV) -> {
 				final fun = funV.as(BFunction);

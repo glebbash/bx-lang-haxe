@@ -11,7 +11,7 @@ using com.glebcorp.blocks.utils.NullUtils;
 
 extern class RelativePrecedence {
 	static inline function precedence(): String->PrecGen {
-		final data: Map<String, Float> = ["MIN" => 0, "MAX" => maxFloat()];
+		final data: Map<String, Float> = ["MIN" => 0, "MAX" => 99999999];
 		return (name: String) -> new PrecGen(name, data);
 	}
 }

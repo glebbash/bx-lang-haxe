@@ -30,6 +30,13 @@ using com.glebcorp.blocks.utils.NullUtils;
 			}
 			parser.unexpectedToken(paramsToken);
 		});
+		if (name != null && parser.nextIs({ value: "=" })) {
+			parser.next();
+			final expr = parser.tokens.peek();
+  			if (expr == null || Block.isBlock(expr.unsafe())) {
+				return parser.unexpectedToken(expr);
+			}
+		}
 		final body = block.blockOrExpr(parser);
 		final fun = new FunExpr(params, body);
 		return name == null ? fun : new NamedFunExpr(name, fun);

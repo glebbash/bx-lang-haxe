@@ -17,7 +17,7 @@ import com.glebcorp.blocks.syntax.Block;
 import com.glebcorp.blocks.syntax.Break;
 import com.glebcorp.blocks.syntax.Call;
 import com.glebcorp.blocks.syntax.Continue;
-import com.glebcorp.blocks.syntax.Define;
+import com.glebcorp.blocks.syntax.DefineVar;
 import com.glebcorp.blocks.syntax.DoAndAssign;
 import com.glebcorp.blocks.syntax.DoubleSemi;
 import com.glebcorp.blocks.syntax.Export;
@@ -166,8 +166,8 @@ class BlocksParser extends Parser<Expression> {
 		addMacro("true", new ConstLiteral(BBoolean.TRUE));
 		addMacro("false", new ConstLiteral(BBoolean.FALSE));
 
-		addMacro("let", new Define(false));
-		addMacro("const", new Define(true));
+		addMacro("let", new DefineVar(false));
+		addMacro("const", new DefineVar(true));
 
 		addMacro("if", new If(BLOCK));
 

@@ -10,7 +10,7 @@ import com.glebcorp.blocks.utils.Panic.panic;
 using Std;
 using com.glebcorp.blocks.utils.NullUtils;
 
-@:tink class Define implements Atom {
+@:tink class DefineVar implements Atom {
 	final constant: Bool = _;
 
 	function parse(parser: ExprParser, token: Token): Expression {
